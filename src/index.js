@@ -71,6 +71,12 @@ export {
     ORB_LOGIC_CONFIG
 } from './engines/SovereignOrbLogicEngine.js';
 
+// 💱 Economy & Risk (Tasks 51-54)
+export {
+    EconomyRiskEngine,
+    ECONOMY_RISK_CONFIG
+} from './engines/EconomyRiskEngine.js';
+
 // Core Engine
 export {
     DiamondMintEngine,

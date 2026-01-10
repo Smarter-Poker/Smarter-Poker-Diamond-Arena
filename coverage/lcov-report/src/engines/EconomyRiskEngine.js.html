@@ -3,7 +3,7 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for src/services/WalletService.js</title>
+    <title>Code coverage report for src/engines/EconomyRiskEngine.js</title>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="../../prettify.css" />
     <link rel="stylesheet" href="../../base.css" />
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/services</a> WalletService.js</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">src/engines</a> EconomyRiskEngine.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">51.16% </span>
+                <span class="strong">68.25% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>22/43</span>
+                <span class='fraction'>43/63</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">48.21% </span>
+                <span class="strong">42.55% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>27/56</span>
+                <span class='fraction'>20/47</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
                 <span class="strong">60% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>6/10</span>
+                <span class='fraction'>9/15</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">53.65% </span>
+                <span class="strong">68.25% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>22/41</span>
+                <span class='fraction'>43/63</span>
             </div>
         
             
@@ -375,7 +375,107 @@
 <a name='L310'></a><a href='#L310'>310</a>
 <a name='L311'></a><a href='#L311'>311</a>
 <a name='L312'></a><a href='#L312'>312</a>
-<a name='L313'></a><a href='#L313'>313</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L313'></a><a href='#L313'>313</a>
+<a name='L314'></a><a href='#L314'>314</a>
+<a name='L315'></a><a href='#L315'>315</a>
+<a name='L316'></a><a href='#L316'>316</a>
+<a name='L317'></a><a href='#L317'>317</a>
+<a name='L318'></a><a href='#L318'>318</a>
+<a name='L319'></a><a href='#L319'>319</a>
+<a name='L320'></a><a href='#L320'>320</a>
+<a name='L321'></a><a href='#L321'>321</a>
+<a name='L322'></a><a href='#L322'>322</a>
+<a name='L323'></a><a href='#L323'>323</a>
+<a name='L324'></a><a href='#L324'>324</a>
+<a name='L325'></a><a href='#L325'>325</a>
+<a name='L326'></a><a href='#L326'>326</a>
+<a name='L327'></a><a href='#L327'>327</a>
+<a name='L328'></a><a href='#L328'>328</a>
+<a name='L329'></a><a href='#L329'>329</a>
+<a name='L330'></a><a href='#L330'>330</a>
+<a name='L331'></a><a href='#L331'>331</a>
+<a name='L332'></a><a href='#L332'>332</a>
+<a name='L333'></a><a href='#L333'>333</a>
+<a name='L334'></a><a href='#L334'>334</a>
+<a name='L335'></a><a href='#L335'>335</a>
+<a name='L336'></a><a href='#L336'>336</a>
+<a name='L337'></a><a href='#L337'>337</a>
+<a name='L338'></a><a href='#L338'>338</a>
+<a name='L339'></a><a href='#L339'>339</a>
+<a name='L340'></a><a href='#L340'>340</a>
+<a name='L341'></a><a href='#L341'>341</a>
+<a name='L342'></a><a href='#L342'>342</a>
+<a name='L343'></a><a href='#L343'>343</a>
+<a name='L344'></a><a href='#L344'>344</a>
+<a name='L345'></a><a href='#L345'>345</a>
+<a name='L346'></a><a href='#L346'>346</a>
+<a name='L347'></a><a href='#L347'>347</a>
+<a name='L348'></a><a href='#L348'>348</a>
+<a name='L349'></a><a href='#L349'>349</a>
+<a name='L350'></a><a href='#L350'>350</a>
+<a name='L351'></a><a href='#L351'>351</a>
+<a name='L352'></a><a href='#L352'>352</a>
+<a name='L353'></a><a href='#L353'>353</a>
+<a name='L354'></a><a href='#L354'>354</a>
+<a name='L355'></a><a href='#L355'>355</a>
+<a name='L356'></a><a href='#L356'>356</a>
+<a name='L357'></a><a href='#L357'>357</a>
+<a name='L358'></a><a href='#L358'>358</a>
+<a name='L359'></a><a href='#L359'>359</a>
+<a name='L360'></a><a href='#L360'>360</a>
+<a name='L361'></a><a href='#L361'>361</a>
+<a name='L362'></a><a href='#L362'>362</a>
+<a name='L363'></a><a href='#L363'>363</a>
+<a name='L364'></a><a href='#L364'>364</a>
+<a name='L365'></a><a href='#L365'>365</a>
+<a name='L366'></a><a href='#L366'>366</a>
+<a name='L367'></a><a href='#L367'>367</a>
+<a name='L368'></a><a href='#L368'>368</a>
+<a name='L369'></a><a href='#L369'>369</a>
+<a name='L370'></a><a href='#L370'>370</a>
+<a name='L371'></a><a href='#L371'>371</a>
+<a name='L372'></a><a href='#L372'>372</a>
+<a name='L373'></a><a href='#L373'>373</a>
+<a name='L374'></a><a href='#L374'>374</a>
+<a name='L375'></a><a href='#L375'>375</a>
+<a name='L376'></a><a href='#L376'>376</a>
+<a name='L377'></a><a href='#L377'>377</a>
+<a name='L378'></a><a href='#L378'>378</a>
+<a name='L379'></a><a href='#L379'>379</a>
+<a name='L380'></a><a href='#L380'>380</a>
+<a name='L381'></a><a href='#L381'>381</a>
+<a name='L382'></a><a href='#L382'>382</a>
+<a name='L383'></a><a href='#L383'>383</a>
+<a name='L384'></a><a href='#L384'>384</a>
+<a name='L385'></a><a href='#L385'>385</a>
+<a name='L386'></a><a href='#L386'>386</a>
+<a name='L387'></a><a href='#L387'>387</a>
+<a name='L388'></a><a href='#L388'>388</a>
+<a name='L389'></a><a href='#L389'>389</a>
+<a name='L390'></a><a href='#L390'>390</a>
+<a name='L391'></a><a href='#L391'>391</a>
+<a name='L392'></a><a href='#L392'>392</a>
+<a name='L393'></a><a href='#L393'>393</a>
+<a name='L394'></a><a href='#L394'>394</a>
+<a name='L395'></a><a href='#L395'>395</a>
+<a name='L396'></a><a href='#L396'>396</a>
+<a name='L397'></a><a href='#L397'>397</a>
+<a name='L398'></a><a href='#L398'>398</a>
+<a name='L399'></a><a href='#L399'>399</a>
+<a name='L400'></a><a href='#L400'>400</a>
+<a name='L401'></a><a href='#L401'>401</a>
+<a name='L402'></a><a href='#L402'>402</a>
+<a name='L403'></a><a href='#L403'>403</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -387,6 +487,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -412,45 +523,36 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">6x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">5x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">6x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -464,14 +566,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -480,6 +574,187 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">14x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">20x</span>
+<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -494,171 +769,24 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -676,6 +804,58 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -688,317 +868,407 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">/**
- * 💰 WALLET SERVICE (RPC-POWERED)
+ * 💱 ECONOMY &amp; RISK ENGINE
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
- * All operations now route through Postgres RPC
- * functions for atomic, metal-speed execution.
+ * SOVEREIGN_MAPPING: 51-66 | ECONOMY &amp; RISK
+ * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+ * 
+ * Task 51: ARCADE_RNG_ORACLE
+ * Task 52: DIAMOND_ARENA_RAKEBACK
+ * Task 53: BURN_VAULT_TRANSPARENCY
+ * Task 54: MULTI_CURRENCY_ATOMIC_SWAP
+ * 
+ * @target Economy &amp; Risk Layer
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 &nbsp;
+import { createHash, randomBytes } from 'crypto';
+&nbsp;
 // ═══════════════════════════════════════════════════════════
-// 📋 TRANSACTION SOURCES
+// ⚙️ ECONOMY &amp; RISK CONFIGURATION
 // ═══════════════════════════════════════════════════════════
-export const TX_SOURCES = {
-    // Credit sources
-    DAILY_CLAIM: 'DAILY_CLAIM',
-    SESSION_REWARD: 'SESSION_REWARD',
-    ARCADE_WIN: 'ARCADE_WIN',
-    STORE_REFUND: 'STORE_REFUND',
-    ADMIN_GRANT: 'ADMIN_GRANT',
-    TRANSFER_IN: 'TRANSFER_IN',
-    BONUS: 'BONUS',
-    // Debit sources
-    ARCADE_STAKE: 'ARCADE_STAKE',
-    STORE_PURCHASE: 'STORE_PURCHASE',
-    ADMIN_REVOKE: 'ADMIN_REVOKE',
-    TRANSFER_OUT: 'TRANSFER_OUT'
+&nbsp;
+export const ECONOMY_RISK_CONFIG = {
+    // Task 51: RNG Oracle
+    RNG: {
+        ALGORITHM: 'SHA-256',
+        PROVABLY_FAIR: true
+    },
+&nbsp;
+    // Task 52: Rakeback Tiers
+    RAKEBACK_TIERS: [
+        { name: 'NO_RAKEBACK', minStreak: 0, percent: 0 },
+        { name: 'BRONZE_RAKEBACK', minStreak: 7, percent: 1.00 },
+        { name: 'SILVER_RAKEBACK', minStreak: 14, percent: 2.50 },
+        { name: 'GOLD_RAKEBACK', minStreak: 21, percent: 4.00 },
+        { name: 'LEGENDARY_RAKEBACK', minStreak: 30, percent: 5.00 }
+    ],
+&nbsp;
+    // Task 53: Burn Transparency
+    BURN_TRANSPARENCY: {
+        PUBLIC: true,
+        ANONYMIZED: true
+    },
+&nbsp;
+    // Task 54: Currency Swap
+    SWAP_RATES: {
+        XP_TO_DIAMOND: { rate: 0.01, fee: 5.00 },  // 100 XP = 1 Diamond (5% fee)
+        DIAMOND_TO_TICKET: { rate: 1.00, fee: 0 }   // 1:1 no fee
+    }
 };
 &nbsp;
 // ═══════════════════════════════════════════════════════════
-// 💼 WALLET SERVICE CLASS (RPC-POWERED)
+// 💱 ECONOMY &amp; RISK ENGINE CLASS
 // ═══════════════════════════════════════════════════════════
-export class WalletService {
 &nbsp;
-    /**
-     * @param {object} supabase - Initialized Supabase client
-     */
-    constructor(supabase) {
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (!supabase) {
-<span class="cstat-no" title="statement not covered" >            throw new Error('WALLET_ERROR: Supabase client is required');</span>
+export class EconomyRiskEngine {
+&nbsp;
+    constructor(supabaseClient) {
+        if (!supabaseClient) {
+            throw new Error('ECONOMY_RISK_ERROR: Supabase client required');
         }
-        this.supabase = supabase;
+        this.supabase = supabaseClient;
     }
 &nbsp;
     // ═══════════════════════════════════════════════════════
-    // 📖 READ OPERATIONS
+    // 🎲 TASK 51: ARCADE RNG ORACLE
     // ═══════════════════════════════════════════════════════
 &nbsp;
     /**
-     * Get wallet for a user (read-only, doesn't create)
+     * Generate provably fair RNG seed
+     * 
+     * @param {object} rngData - RNG parameters
+     * @returns {Promise&lt;object&gt;} RNG result
+     */
+    async generateRngSeed(rngData) {
+        const { sessionId, gameMode, userId, clientSeed } = rngData;
+&nbsp;
+        const { data, error } = await this.supabase.rpc('fn_generate_rng_seed', {
+            p_session_id: sessionId,
+            p_game_mode: gameMode,
+            p_user_id: userId,
+            p_client_seed: clientSeed
+        });
+&nbsp;
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (error) {
+<span class="cstat-no" title="statement not covered" >            return { success: false, error: error.message };</span>
+        }
+&nbsp;
+        return typeof data === 'string' ? <span class="branch-0 cbranch-no" title="branch not covered" >JSON.parse(data) </span>: data;
+    }
+&nbsp;
+    /**
+     * Verify RNG seed after game
+     * 
+     * @param {string} seedId - Seed UUID
+     * @returns {Promise&lt;object&gt;} Verification result
+     */
+<span class="fstat-no" title="function not covered" >    as</span>ync verifyRngSeed(seedId) {
+        const { data, error } = <span class="cstat-no" title="statement not covered" >await this.supabase.rpc('fn_verify_rng_seed', {</span>
+            p_seed_id: seedId
+        });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (error) {</span>
+<span class="cstat-no" title="statement not covered" >            return { success: false, error: error.message };</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return typeof data === 'string' ? JSON.parse(data) : data;</span>
+    }
+&nbsp;
+    /**
+     * Generate RNG locally (for preview/testing)
+     * 
+     * @param {string} serverSeed - Server seed
+     * @param {string} clientSeed - Client seed
+     * @param {number} nonce - Nonce
+     * @returns {object} Local RNG result
+     */
+    static generateRngLocal(serverSeed, clientSeed, nonce) {
+        const combined = `${serverSeed}:${clientSeed}:${nonce}`;
+        const hash = createHash('sha256').update(combined).digest('hex');
+        const rollValue = parseInt(hash.substring(0, 8), 16) / 0xFFFFFFFF;
+&nbsp;
+        return {
+            serverSeedHash: createHash('sha256').update(serverSeed).digest('hex'),
+            clientSeed,
+            nonce,
+            combinedSeed: combined,
+            finalHash: hash,
+            rollValue,
+            normalized: `${(rollValue * 100).toFixed(2)}%`
+        };
+    }
+&nbsp;
+    /**
+     * Generate cryptographic server seed locally
+     * 
+     * @returns {object} Server seed and hash
+     */
+    static generateServerSeed() {
+        const serverSeed = randomBytes(32).toString('hex');
+        const serverSeedHash = createHash('sha256').update(serverSeed).digest('hex');
+&nbsp;
+        return { serverSeed, serverSeedHash };
+    }
+&nbsp;
+    // ═══════════════════════════════════════════════════════
+    // 💰 TASK 52: DIAMOND ARENA RAKEBACK
+    // ═══════════════════════════════════════════════════════
+&nbsp;
+    /**
+     * Calculate rakeback for high-streak users
+     * 
+     * @param {object} rakebackData - Rakeback parameters
+     * @returns {Promise&lt;object&gt;} Rakeback result
+     */
+    async calculateRakeback(rakebackData) {
+        const { userId, feeSource, feeAmount } = rakebackData;
+&nbsp;
+        const { data, error } = await this.supabase.rpc('fn_calculate_rakeback', {
+            p_user_id: userId,
+            p_fee_source: feeSource,
+            p_fee_amount: feeAmount
+        });
+&nbsp;
+        <span class="missing-if-branch" title="if path not taken" >I</span>if (error) {
+<span class="cstat-no" title="statement not covered" >            return { success: false, error: error.message };</span>
+        }
+&nbsp;
+        return typeof data === 'string' ? <span class="branch-0 cbranch-no" title="branch not covered" >JSON.parse(data) </span>: data;
+    }
+&nbsp;
+    /**
+     * Calculate rakeback locally
+     * 
+     * @param {number} feeAmount - Fee paid
+     * @param {number} streakDays - User streak
+     * @returns {object} Rakeback calculation
+     */
+    static calculateRakebackLocal(feeAmount, streakDays) {
+        const tiers = ECONOMY_RISK_CONFIG.RAKEBACK_TIERS;
+        let tier = tiers[0];
+&nbsp;
+        for (const t of tiers) {
+            if (streakDays &gt;= t.minStreak) {
+                tier = t;
+            }
+        }
+&nbsp;
+        const rakebackAmount = Math.floor(feeAmount * (tier.percent / 100));
+&nbsp;
+        return {
+            feeAmount,
+            streakDays,
+            tier: tier.name,
+            percent: tier.percent,
+            rakebackAmount,
+            eligible: tier.percent &gt; 0
+        };
+    }
+&nbsp;
+    /**
+     * Get user's rakeback history
      * 
      * @param {string} userId - User UUID
-     * @returns {Promise&lt;object|null&gt;} Wallet record or null
+     * @param {number} limit - Max records
+     * @returns {Promise&lt;object&gt;} Rakeback history
      */
-<span class="fstat-no" title="function not covered" >    as</span>ync getWallet(userId) {
+<span class="fstat-no" title="function not covered" >    as</span>ync getRakebackHistory(userId, limit = <span class="branch-0 cbranch-no" title="branch not covered" >50)</span> {
         const { data, error } = <span class="cstat-no" title="statement not covered" >await this.supabase</span>
-            .from('wallets')
-            .select('*')
-            .eq('user_id', userId)
-            .single();
-&nbsp;
-<span class="cstat-no" title="statement not covered" >        if (error &amp;&amp; error.code !== 'PGRST116') {</span>
-<span class="cstat-no" title="statement not covered" >            throw new Error(`WALLET_ERROR: ${error.message}`);</span>
-        }
-&nbsp;
-<span class="cstat-no" title="statement not covered" >        return data;</span>
-    }
-&nbsp;
-    /**
-     * Get wallet balance
-     * 
-     * @param {string} userId - User UUID
-     * @returns {Promise&lt;number&gt;} Current balance (0 if no wallet)
-     */
-<span class="fstat-no" title="function not covered" >    as</span>ync getBalance(userId) {
-        const wallet = <span class="cstat-no" title="statement not covered" >await this.getWallet(userId);</span>
-<span class="cstat-no" title="statement not covered" >        return wallet?.balance ?? 0;</span>
-    }
-&nbsp;
-    /**
-     * Get transaction history for a user
-     * 
-     * @param {string} userId - User UUID
-     * @param {object} options - Query options
-     * @returns {Promise&lt;object[]&gt;} Transaction records
-     */
-<span class="fstat-no" title="function not covered" >    as</span>ync getTransactionHistory(userId, { limit = <span class="branch-0 cbranch-no" title="branch not covered" >50,</span> offset = <span class="branch-0 cbranch-no" title="branch not covered" >0,</span> source = <span class="branch-0 cbranch-no" title="branch not covered" >null,</span> type = <span class="branch-0 cbranch-no" title="branch not covered" >null </span>} = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> {
-        let query = <span class="cstat-no" title="statement not covered" >this.supabase</span>
-            .from('transactions')
+            .from('rakeback_ledger')
             .select('*')
             .eq('user_id', userId)
             .order('created_at', { ascending: false })
-            .range(offset, offset + limit - 1);
+            .limit(limit);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        if (source) <span class="cstat-no" title="statement not covered" >query = query.eq('source', source);</span></span>
-<span class="cstat-no" title="statement not covered" >        if (type) <span class="cstat-no" title="statement not covered" >query = query.eq('type', type);</span></span>
+<span class="cstat-no" title="statement not covered" >        return {</span>
+            success: !error,
+            entries: data || [],
+            totalEarned: (data || []).reduce(<span class="fstat-no" title="function not covered" >(s</span>um, e) =&gt; <span class="cstat-no" title="statement not covered" >sum + e.rakeback_amount,</span> 0)
+        };
+    }
 &nbsp;
-        const { data, error } = <span class="cstat-no" title="statement not covered" >await query;</span>
+    // ═══════════════════════════════════════════════════════
+    // 🔥 TASK 53: BURN VAULT TRANSPARENCY
+    // ═══════════════════════════════════════════════════════
+&nbsp;
+    /**
+     * Get burn vault transparency data
+     * 
+     * @param {number} limit - Max records
+     * @returns {Promise&lt;object&gt;} Burn transparency
+     */
+    async getBurnTransparency(limit = <span class="branch-0 cbranch-no" title="branch not covered" >100)</span> {
+        const { data, error } = await this.supabase
+            .from('burn_vault_transparency')
+            .select('*')
+            .limit(limit);
+&nbsp;
+        return {
+            success: !error,
+            burns: data || <span class="branch-1 cbranch-no" title="branch not covered" >[],</span>
+            count: data?.length || <span class="branch-1 cbranch-no" title="branch not covered" >0</span>
+        };
+    }
+&nbsp;
+    /**
+     * Get burn vault summary
+     * 
+     * @returns {Promise&lt;object&gt;} Summary
+     */
+<span class="fstat-no" title="function not covered" >    as</span>ync getBurnVaultSummary() {
+        const { data, error } = <span class="cstat-no" title="statement not covered" >await this.supabase</span>
+            .from('burn_vault_summary')
+            .select('*')
+            .single();
 &nbsp;
 <span class="cstat-no" title="statement not covered" >        if (error) {</span>
-<span class="cstat-no" title="statement not covered" >            throw new Error(`WALLET_ERROR: Failed to fetch history - ${error.message}`);</span>
+<span class="cstat-no" title="statement not covered" >            return { success: false, error: error.message };</span>
         }
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        return data || [];</span>
+<span class="cstat-no" title="statement not covered" >        return {</span>
+            success: true,
+            summary: data
+        };
     }
 &nbsp;
     // ═══════════════════════════════════════════════════════
-    // 💎 CREDIT OPERATIONS (RPC)
+    // 💱 TASK 54: MULTI-CURRENCY ATOMIC SWAP
     // ═══════════════════════════════════════════════════════
 &nbsp;
     /**
-     * Credit diamonds to a wallet (ATOMIC via RPC)
+     * Execute currency swap
      * 
-     * @param {string} userId - User UUID
-     * @param {number} amount - Amount to credit
-     * @param {string} source - Transaction source
-     * @param {object} options - Additional options
-     * @returns {Promise&lt;object&gt;} RPC result
+     * @param {object} swapData - Swap parameters
+     * @returns {Promise&lt;object&gt;} Swap result
      */
-    async credit(userId, amount, source, options = {}) {
-        const { data, error } = await this.supabase.rpc('fn_mint_diamonds_atomic', {
+    async executeCurrencySwap(swapData) {
+        const { userId, fromCurrency, toCurrency, amount } = swapData;
+&nbsp;
+        const { data, error } = await this.supabase.rpc('fn_execute_currency_swap', {
             p_user_id: userId,
-            p_amount: amount,
-            p_source: source,
-            p_reference_id: options.referenceId || null,
-            p_reference_type: options.referenceType || null,
-            p_metadata: options.metadata || {}
+            p_from_currency: fromCurrency,
+            p_to_currency: toCurrency,
+            p_amount: amount
         });
 &nbsp;
         <span class="missing-if-branch" title="if path not taken" >I</span>if (error) {
-<span class="cstat-no" title="statement not covered" >            throw new Error(`WALLET_ERROR: RPC failed - ${error.message}`);</span>
+<span class="cstat-no" title="statement not covered" >            return { success: false, error: error.message };</span>
         }
 &nbsp;
-        // RPC returns JSONB, parse if needed
-        const result = typeof data === 'string' ? <span class="branch-0 cbranch-no" title="branch not covered" >JSON.parse(data) </span>: data;
+        return typeof data === 'string' ? <span class="branch-0 cbranch-no" title="branch not covered" >JSON.parse(data) </span>: data;
+    }
 &nbsp;
-        if (!result.success) {
-            return {
-                success: false,
-                error: result.error,
-                message: result.message
-            };
+    /**
+     * Calculate swap preview locally
+     * 
+     * @param {string} fromCurrency - Source currency
+     * @param {string} toCurrency - Target currency
+     * @param {number} amount - Input amount
+     * @returns {object} Swap preview
+     */
+    static calculateSwapPreview(fromCurrency, toCurrency, amount) {
+        let rate, feePercent;
+&nbsp;
+        if (fromCurrency === 'XP' &amp;&amp; toCurrency === 'DIAMOND') {
+            rate = ECONOMY_RISK_CONFIG.SWAP_RATES.XP_TO_DIAMOND.rate;
+            feePercent = ECONOMY_RISK_CONFIG.SWAP_RATES.XP_TO_DIAMOND.fee;
+        } else if (fromCurrency === 'DIAMOND' &amp;&amp; toCurrency === 'ARENA_TICKET') {
+            rate = ECONOMY_RISK_CONFIG.SWAP_RATES.DIAMOND_TO_TICKET.rate;
+            feePercent = ECONOMY_RISK_CONFIG.SWAP_RATES.DIAMOND_TO_TICKET.fee;
+        } else {
+            return { success: false, error: 'SWAP_PAIR_NOT_SUPPORTED' };
         }
+&nbsp;
+        const fee = Math.floor(amount * (feePercent / 100));
+        const netInput = amount - fee;
+        const output = Math.floor(netInput * rate);
 &nbsp;
         return {
             success: true,
-            type: 'CREDIT',
-            amount: result.amount,
-            balanceBefore: result.balance_before,
-            balanceAfter: result.balance_after,
-            walletId: result.wallet_id,
-            transactionId: result.transaction_id,
-            walletCreated: result.wallet_created
+            from: fromCurrency,
+            to: toCurrency,
+            input: amount,
+            fee,
+            feePercent: `${feePercent}%`,
+            output,
+            rate,
+            formula: `${amount} ${fromCurrency} - ${fee} fee = ${output} ${toCurrency}`
+        };
+    }
+&nbsp;
+    /**
+     * Get swap history
+     * 
+     * @param {string} userId - User UUID
+     * @param {number} limit - Max records
+     * @returns {Promise&lt;object&gt;} Swap history
+     */
+<span class="fstat-no" title="function not covered" >    as</span>ync getSwapHistory(userId, limit = <span class="branch-0 cbranch-no" title="branch not covered" >50)</span> {
+        const { data, error } = <span class="cstat-no" title="statement not covered" >await this.supabase</span>
+            .from('currency_swap_ledger')
+            .select('*')
+            .eq('user_id', userId)
+            .order('created_at', { ascending: false })
+            .limit(limit);
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        return {</span>
+            success: !error,
+            swaps: data || [],
+            count: data?.length || 0
         };
     }
 &nbsp;
     // ═══════════════════════════════════════════════════════
-    // 💸 DEBIT OPERATIONS (RPC)
+    // 📊 STATUS
     // ═══════════════════════════════════════════════════════
 &nbsp;
     /**
-     * Debit diamonds from a wallet (ATOMIC via RPC)
+     * Get Economy &amp; Risk status
      * 
-     * @param {string} userId - User UUID
-     * @param {number} amount - Amount to debit
-     * @param {string} source - Transaction source
-     * @param {object} options - Additional options
-     * @returns {Promise&lt;object&gt;} RPC result
+     * @returns {Promise&lt;object&gt;} Status
      */
-    async debit(userId, amount, source, options = {}) {
-        const { data, error } = await this.supabase.rpc('fn_burn_diamonds_atomic', {
-            p_user_id: userId,
-            p_amount: amount,
-            p_source: source,
-            p_reference_id: options.referenceId || null,
-            p_reference_type: options.referenceType || null,
-            p_metadata: options.metadata || {}
-        });
+<span class="fstat-no" title="function not covered" >    as</span>ync getEconomyRiskStatus() {
+        const { data, error } = <span class="cstat-no" title="statement not covered" >await this.supabase</span>
+            .from('economy_risk_status')
+            .select('*')
+            .single();
 &nbsp;
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (error) {
-<span class="cstat-no" title="statement not covered" >            throw new Error(`WALLET_ERROR: RPC failed - ${error.message}`);</span>
+<span class="cstat-no" title="statement not covered" >        if (error) {</span>
+<span class="cstat-no" title="statement not covered" >            return { success: false, error: error.message };</span>
         }
 &nbsp;
-        const result = typeof data === 'string' ? <span class="branch-0 cbranch-no" title="branch not covered" >JSON.parse(data) </span>: data;
-&nbsp;
-        if (!result.success) {
-            return {
-                success: false,
-                error: result.error,
-                message: result.message,
-                currentBalance: result.current_balance,
-                requiredAmount: result.required_amount,
-                shortfall: result.shortfall
-            };
-        }
-&nbsp;
-        return {
+<span class="cstat-no" title="statement not covered" >        return {</span>
             success: true,
-            type: 'DEBIT',
-            amount: result.amount,
-            balanceBefore: result.balance_before,
-            balanceAfter: result.balance_after,
-            walletId: result.wallet_id,
-            transactionId: result.transaction_id
+            status: {
+                task51_rngOracle: {
+                    totalRolls: data.total_rng_rolls,
+                    verifiedRolls: data.verified_rolls
+                },
+                task52_rakeback: {
+                    entries: data.total_rakeback_entries,
+                    earned: data.total_rakeback_earned,
+                    credited: data.total_rakeback_credited
+                },
+                task53_burnTransparency: {
+                    totalBurned: data.total_diamonds_burned,
+                    transactions: data.burn_transaction_count
+                },
+                task54_currencySwap: {
+                    totalSwaps: data.total_swaps,
+                    feesCollected: data.total_swap_fees
+                },
+                verifiedAt: data.verified_at
+            }
         };
-    }
-&nbsp;
-    // ═══════════════════════════════════════════════════════
-    // 🔁 TRANSFER OPERATIONS (RPC)
-    // ═══════════════════════════════════════════════════════
-&nbsp;
-    /**
-     * Transfer diamonds between users (ATOMIC via RPC)
-     * 
-     * @param {string} fromUserId - Sender UUID
-     * @param {string} toUserId - Recipient UUID
-     * @param {number} amount - Amount to transfer
-     * @param {object} metadata - Additional context
-     * @returns {Promise&lt;object&gt;} Transfer result
-     */
-    async transfer(fromUserId, toUserId, amount, metadata = {}) {
-        const { data, error } = await this.supabase.rpc('fn_transfer_diamonds_atomic', {
-            p_from_user_id: fromUserId,
-            p_to_user_id: toUserId,
-            p_amount: amount,
-            p_metadata: metadata
-        });
-&nbsp;
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (error) {
-<span class="cstat-no" title="statement not covered" >            throw new Error(`WALLET_ERROR: RPC failed - ${error.message}`);</span>
-        }
-&nbsp;
-        const result = typeof data === 'string' ? <span class="branch-0 cbranch-no" title="branch not covered" >JSON.parse(data) </span>: data;
-&nbsp;
-        <span class="missing-if-branch" title="if path not taken" >I</span>if (!result.success) {
-<span class="cstat-no" title="statement not covered" >            return {</span>
-                success: false,
-                error: result.error,
-                message: result.message
-            };
-        }
-&nbsp;
-        return {
-            success: true,
-            amount: result.amount,
-            fromUser: result.from_user,
-            toUser: result.to_user,
-            debitTransactionId: result.debit_transaction,
-            creditTransactionId: result.credit_transaction,
-            senderBalance: result.sender_balance,
-            recipientBalance: result.recipient_balance
-        };
-    }
-&nbsp;
-    // ═══════════════════════════════════════════════════════
-    // 🎮 ARCADE INTEGRATION (Convenience Methods)
-    // ═══════════════════════════════════════════════════════
-&nbsp;
-    /**
-     * Stake diamonds for arcade entry
-     * 
-     * @param {string} userId - User UUID
-     * @param {number} stakeAmount - Amount to stake
-     * @param {string} gameMode - Arcade game mode
-     * @param {string} sessionId - Game session ID
-     * @returns {Promise&lt;object&gt;} Stake result
-     */
-    async stakeForArcade(userId, stakeAmount, gameMode, sessionId) {
-        return this.debit(userId, stakeAmount, TX_SOURCES.ARCADE_STAKE, {
-            referenceId: sessionId,
-            referenceType: 'ARCADE_SESSION',
-            metadata: { gameMode }
-        });
-    }
-&nbsp;
-    /**
-     * Award arcade winnings
-     * 
-     * @param {string} userId - User UUID
-     * @param {number} winAmount - Amount won
-     * @param {string} sessionId - Game session ID
-     * @param {object} gameResult - Game result data
-     * @returns {Promise&lt;object&gt;} Payout result
-     */
-    async payoutArcadeWin(userId, winAmount, sessionId, gameResult = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> {
-        return this.credit(userId, winAmount, TX_SOURCES.ARCADE_WIN, {
-            referenceId: sessionId,
-            referenceType: 'ARCADE_SESSION',
-            metadata: gameResult
-        });
-    }
-&nbsp;
-    /**
-     * Process session reward (training completion)
-     * 
-     * @param {string} userId - User UUID
-     * @param {number} rewardAmount - Calculated reward
-     * @param {string} sessionId - Session ID
-     * @param {object} sessionData - Session performance data
-     * @returns {Promise&lt;object&gt;} Reward result
-     */
-<span class="fstat-no" title="function not covered" >    as</span>ync rewardSession(userId, rewardAmount, sessionId, sessionData = <span class="branch-0 cbranch-no" title="branch not covered" >{})</span> {
-<span class="cstat-no" title="statement not covered" >        return this.credit(userId, rewardAmount, TX_SOURCES.SESSION_REWARD, {</span>
-            referenceId: sessionId,
-            referenceType: 'TRAINING_SESSION',
-            metadata: sessionData
-        });
     }
 }
 &nbsp;
 // ═══════════════════════════════════════════════════════════
 // 📤 EXPORTS
 // ═══════════════════════════════════════════════════════════
-export default WalletService;
+&nbsp;
+export default EconomyRiskEngine;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
