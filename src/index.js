@@ -35,6 +35,18 @@ export {
     MASTER_BUS_CONFIG
 } from './engines/YellowMasterBusEngine.js';
 
+// ⚡ Yellow Integration Strike (Tasks 16-18)
+export {
+    YellowIntegrationStrikeEngine,
+    INTEGRATION_STRIKE_CONFIG
+} from './engines/YellowIntegrationStrikeEngine.js';
+
+// ✨ Yellow Visual Addiction (Tasks 19-21)
+export {
+    YellowVisualAddictionEngine,
+    VISUAL_ADDICTION_CONFIG
+} from './engines/YellowVisualAddictionEngine.js';
+
 // Core Engine
 export {
     DiamondMintEngine,
