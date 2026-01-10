@@ -59,6 +59,12 @@ export {
     FINAL_SEAL_CONFIG
 } from './engines/YellowFinalSealEngine.js';
 
+// 🛰️ Sovereign Orb Sync (Tasks 41-43)
+export {
+    SovereignOrbSyncEngine,
+    ORB_SYNC_CONFIG
+} from './engines/SovereignOrbSyncEngine.js';
+
 // Core Engine
 export {
     DiamondMintEngine,
