@@ -53,6 +53,12 @@ export {
     PRODUCTION_HARDENING_CONFIG
 } from './engines/YellowProductionHardeningEngine.js';
 
+// 👑 Yellow Final Seal (Tasks 25-30)
+export {
+    YellowFinalSealEngine,
+    FINAL_SEAL_CONFIG
+} from './engines/YellowFinalSealEngine.js';
+
 // Core Engine
 export {
     DiamondMintEngine,
