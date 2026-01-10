@@ -47,6 +47,12 @@ export {
     VISUAL_ADDICTION_CONFIG
 } from './engines/YellowVisualAddictionEngine.js';
 
+// 🔒 Yellow Production Hardening (Tasks 22-24)
+export {
+    YellowProductionHardeningEngine,
+    PRODUCTION_HARDENING_CONFIG
+} from './engines/YellowProductionHardeningEngine.js';
+
 // Core Engine
 export {
     DiamondMintEngine,
