@@ -76,6 +76,12 @@ export {
     STREAK_CONFIG
 } from './services/StreakService.js';
 
+// 🛰️ Cloud Integrity Checker
+export {
+    CloudIntegrityChecker,
+    VERIFICATION_REQUIREMENTS
+} from './services/CloudIntegrityChecker.js';
+
 // ⚡ Economy Fix (Database-Level Minting)
 export {
     createEconomyFix,
