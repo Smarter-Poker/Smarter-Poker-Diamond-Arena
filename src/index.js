@@ -65,6 +65,12 @@ export {
     ORB_SYNC_CONFIG
 } from './engines/SovereignOrbSyncEngine.js';
 
+// 🛰️ Sovereign Orb Logic (Tasks 44-46)
+export {
+    SovereignOrbLogicEngine,
+    ORB_LOGIC_CONFIG
+} from './engines/SovereignOrbLogicEngine.js';
+
 // Core Engine
 export {
     DiamondMintEngine,
