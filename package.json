@@ -1,0 +1,21 @@
+{
+  "name": "diamond-economy-rails",
+  "version": "1.0.0",
+  "description": "💎 Smarter.Poker Virtual Currency Mint & Streak System",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "start": "node src/index.js",
+    "migrate": "node src/db/migrate.js"
+  },
+  "keywords": ["poker", "diamonds", "virtual-currency", "streak", "supabase"],
+  "author": "Smarter.Poker",
+  "license": "PROPRIETARY",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}
