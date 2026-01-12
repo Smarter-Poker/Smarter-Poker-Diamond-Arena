@@ -34,4 +34,6 @@ export { TableSettingsPanel } from './components/TableSettingsPanel';
 export { ChatPanel } from './components/ChatPanel';
 export { LeaderboardPanel } from './components/LeaderboardPanel';
 export { QuickActionsHUD } from './components/QuickActionsHUD';
+export { PotOddsCalculator, calculatePotOdds, calculateImpliedOdds } from './components/PotOddsCalculator';
+export { TournamentInfoPanel } from './components/TournamentInfoPanel';
 
