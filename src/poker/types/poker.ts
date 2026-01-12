@@ -111,7 +111,10 @@ export interface TableConfig {
     timeLimit: number;      // Seconds per action
     isPrivate: boolean;
     createdAt: Date;
+    variant?: 'NLH' | 'PLO' | 'PLO5' | 'PLO6' | 'PLO8';
 }
+
+export type PokerVariant = 'NLH' | 'PLO' | 'PLO5' | 'PLO6' | 'PLO8';
 
 export interface Pot {
     amount: number;

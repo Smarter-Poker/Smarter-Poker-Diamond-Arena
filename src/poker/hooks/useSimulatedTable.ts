@@ -34,12 +34,19 @@ export function useSimulatedTable(tableId: string, userId: string, initialConfig
 
     // Initialize Engine
     useEffect(() => {
+        let variant: any = 'NLH';
+        if (tableId.includes('plo5')) variant = 'PLO5';
+        else if (tableId.includes('plo6')) variant = 'PLO6';
+        else if (tableId.includes('plo8')) variant = 'PLO8';
+        else if (tableId.includes('plo')) variant = 'PLO';
+
         const config: TableConfig = initialConfig || {
-            id: 'sim-table-1',
-            name: 'Simulation Arena (Offline)',
-            gameType: 'NLH',
+            id: tableId,
+            name: `Sim ${variant} Arena`,
+            gameType: 'CASH',
+            variant: variant,
             tableSize: 6,
-            bettingStructure: 'NO_LIMIT',
+            bettingStructure: variant === 'NLH' ? 'NO_LIMIT' : 'POT_LIMIT',
             smallBlind: 10,
             bigBlind: 20,
             ante: 0,

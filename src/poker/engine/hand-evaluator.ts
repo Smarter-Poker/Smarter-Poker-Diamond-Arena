@@ -54,6 +54,91 @@ export function evaluateHand(cards: Card[]): EvaluatedHand {
 }
 
 /**
+ * Evaluate Omaha Hand (High)
+ * Must use exactly 2 hole cards and 3 community cards
+ */
+export function evaluateOmahaHand(holeCards: Card[], communityCards: Card[]): EvaluatedHand {
+    if (holeCards.length < 2 || communityCards.length < 3) {
+        throw new Error('Omaha requires at least 2 hole cards and 3 community cards');
+    }
+
+    const holeCombos = getCombinations(holeCards, 2);
+    const boardCombos = getCombinations(communityCards, 3);
+
+    let bestHand: EvaluatedHand | null = null;
+
+    for (const h of holeCombos) {
+        for (const b of boardCombos) {
+            const hand = [...h, ...b];
+            const evaluated = evaluateFiveCardHand(hand);
+            if (!bestHand || compareHands(evaluated, bestHand) > 0) {
+                bestHand = evaluated;
+            }
+        }
+    }
+
+    return bestHand!;
+}
+
+/**
+ * Evaluate Omaha Low Hand (8-or-better)
+ * Ace is low (1). Straights/Flushes ignored. Unpaired only.
+ * Returns null if no qualifying low hand.
+ */
+export function evaluateOmahaLowHand(holeCards: Card[], communityCards: Card[]): EvaluatedHand | null {
+    if (holeCards.length < 2 || communityCards.length < 3) return null;
+
+    const holeCombos = getCombinations(holeCards, 2);
+    const boardCombos = getCombinations(communityCards, 3);
+
+    let bestLow: EvaluatedHand | null = null;
+    let bestLowValue = Infinity; // Lower is better for Low hands
+
+    for (const h of holeCombos) {
+        for (const b of boardCombos) {
+            const hand = [...h, ...b];
+
+            // Check for pairs - if any pair, disqualified for Low 8ob
+            const ranks = hand.map(c => c.rank === 'A' ? 1 : rankValue(c.rank));
+            const uniqueRanks = new Set(ranks);
+
+            if (uniqueRanks.size !== 5) continue; // Has pairs
+
+            // Check 8-or-better condition
+            const maxRank = Math.max(...ranks);
+            if (maxRank > 8) continue; // Not 8-or-better
+
+            // Calculate Low Value (Treat as base-14 digits for comparison, lower appears stronger)
+            // e.g. 7-5-4-3-2 = 75432. 
+            // 5-4-3-2-A = 54321 (Winner).
+            // Sort Descending: 5,4,3,2,1
+            const sorted = ranks.sort((x, y) => y - x); // Desc [5, 4, 3, 2, 1]
+
+            // Create a comparable integer value: e.g. 87654
+            const value = sorted.reduce((acc, r) => acc * 15 + r, 0);
+
+            if (value < bestLowValue) {
+                bestLowValue = value;
+                bestLow = {
+                    rank: 'HIGH_CARD', // Placeholder, not used for low comparison logic usually
+                    rankValue: -value, // Negative to reuse standard compare > logic if needed, or store value
+                    kickers: sorted,
+                    description: `${sorted.join('-')} Low`,
+                    cards: hand // Original cards (with suits) corresponding to these ranks? 
+                        // Wait, ranks array lost card ref. Need to map back or sort hand.
+                        // Actually evaluateFiveCardHand returns sorted cards. 
+                        // But here we need specific low sort (A is low).
+                        // Let's just store the hand array for now, sorted by low rank.
+                        .map(r => hand.find(c => (c.rank === 'A' ? 1 : rankValue(c.rank)) === r)!)
+                };
+            }
+        }
+    }
+
+    return bestLow;
+}
+
+/**
  * Evaluate exactly 5 cards
  */
 function evaluateFiveCardHand(cards: Card[]): EvaluatedHand {

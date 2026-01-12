@@ -94,27 +94,29 @@ export const PokerLobby: React.FC<PokerLobbyProps> = ({
                         </span>
                     </div>
 
-                    {/* Simulation Mode */}
-                    <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => onJoinTable('sim-offline-1')}
-                        style={{
-                            padding: '12px 24px',
-                            borderRadius: 8,
-                            border: '1px solid rgba(0,224,255,0.3)',
-                            background: 'rgba(0,224,255,0.1)',
-                            color: '#00E0FF',
-                            fontSize: 14,
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 8,
-                        }}
-                    >
-                        🕹️ Offline Sim
-                    </motion.button>
+                    {/* Sim Variants */}
+                    <div style={{ display: 'flex', gap: 8 }}>
+                        {['NLH', 'PLO', 'PLO8', 'PLO5', 'PLO6'].map(v => (
+                            <motion.button
+                                key={v}
+                                whileHover={{ scale: 1.05 }}
+                                whileTap={{ scale: 0.95 }}
+                                onClick={() => onJoinTable(`sim-${v.toLowerCase()}-${Math.floor(Math.random() * 1000)}`)}
+                                style={{
+                                    padding: '8px 12px',
+                                    borderRadius: 6,
+                                    border: '1px solid rgba(0,224,255,0.3)',
+                                    background: 'rgba(0,224,255,0.1)',
+                                    color: '#00E0FF',
+                                    fontSize: 12,
+                                    fontWeight: 600,
+                                    cursor: 'pointer',
+                                }}
+                            >
+                                {v}
+                            </motion.button>
+                        ))}
+                    </div>
 
                     {/* Create Table */}
                     <motion.button

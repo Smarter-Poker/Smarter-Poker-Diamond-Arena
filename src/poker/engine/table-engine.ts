@@ -19,7 +19,7 @@ import type {
     EvaluatedHand,
 } from '../types/poker';
 import { Deck } from './deck';
-import { evaluateHand, determineWinners } from './hand-evaluator';
+import { evaluateHand, determineWinners, evaluateOmahaHand, evaluateOmahaLowHand } from './hand-evaluator';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🎰 TABLE ENGINE CLASS
@@ -268,8 +268,15 @@ export class PokerTableEngine {
     }
 
     private dealHoleCards(): void {
-        // Deal 2 cards to each active player
-        for (let round = 0; round < 2; round++) {
+        const variant = this.state.config.variant || 'NLH';
+        let cardsToDeal = 2; // NLH default
+
+        if (variant === 'PLO' || variant === 'PLO8') cardsToDeal = 4;
+        else if (variant === 'PLO5') cardsToDeal = 5;
+        else if (variant === 'PLO6') cardsToDeal = 6;
+
+        // Deal cards to each active player
+        for (let round = 0; round < cardsToDeal; round++) {
             for (const player of this.state.seats) {
                 if (player && player.status === 'ACTIVE') {
                     const card = this.deck.deal();
@@ -705,15 +712,30 @@ export class PokerTableEngine {
         this.state.street = 'SHOWDOWN';
         this.logHistory('STREET_CHANGE', undefined, undefined, undefined, undefined, 'Showdown');
 
+        const variant = this.state.config.variant || 'NLH';
+        const isOmaha = variant.startsWith('PLO');
+        const isHiLo = variant === 'PLO8';
+
         // Evaluate all hands
-        const contenders: { id: string; player: Player; hand: EvaluatedHand }[] = [];
+        const contenders: { id: string; player: Player; hand: EvaluatedHand; handLow?: EvaluatedHand | null }[] = [];
 
         for (const player of this.getSeatedPlayers()) {
             // Include anyone who is NOT folded and who has cards
             if (player.status !== 'FOLDED' && player.status !== 'SITTING_OUT' && player.status !== 'WAITING' && player.holeCards) {
-                const allCards = [...player.holeCards, ...this.state.communityCards];
-                const hand = evaluateHand(allCards);
-                contenders.push({ id: player.id, player, hand });
+                let hand: EvaluatedHand;
+                let handLow: EvaluatedHand | null = null;
+
+                if (isOmaha) {
+                    hand = evaluateOmahaHand(player.holeCards, this.state.communityCards);
+                    if (isHiLo) {
+                        handLow = evaluateOmahaLowHand(player.holeCards, this.state.communityCards);
+                    }
+                } else {
+                    const allCards = [...player.holeCards, ...this.state.communityCards];
+                    hand = evaluateHand(allCards);
+                }
+
+                contenders.push({ id: player.id, player, hand, handLow });
             }
         }
 
@@ -733,24 +755,64 @@ export class PokerTableEngine {
             }
 
             // Determine winner(s) just for this pot
-            const winnerData = determineWinners(potContenders.map(c => ({ id: c.id, hand: c.hand })));
-            const potWinners = potContenders.filter(c => winnerData.some(w => w.id === c.id));
+            let highWinners: typeof potContenders = [];
+            let lowWinners: typeof potContenders = [];
+            let highPot = pot.amount;
+            let lowPot = 0;
 
-            if (potWinners.length === 0) return;
+            // Split Pot Logic for PLO8
+            if (isHiLo) {
+                const qualifiedLows = potContenders.filter(c => c.handLow !== null);
 
-            const winAmount = Math.floor(pot.amount / potWinners.length);
-            const remainder = pot.amount % potWinners.length;
+                if (qualifiedLows.length > 0) {
+                    // Split pot!
+                    lowPot = Math.floor(pot.amount / 2);
+                    highPot = pot.amount - lowPot; // Odd chip goes to High
 
-            potWinners.forEach((winner, index) => {
-                const prize = winAmount + (index === 0 ? remainder : 0);
-                winner.player.chipStack += prize;
-                totalDistributed += prize;
+                    // Determine Low Winners
+                    const lowCandidates = qualifiedLows.map(c => ({ id: c.id, hand: c.handLow! }));
+                    const lowWinnerData = determineWinners(lowCandidates);
+                    lowWinners = qualifiedLows.filter(c => lowWinnerData.some(w => w.id === c.id));
+                }
+            }
 
-                this.logHistory('WINNER', winner.player.id, undefined, prize, undefined,
-                    `${winner.player.username} wins ${prize} from ${pot.isMainPot ? 'Main Pot' : 'Side Pot #' + potIndex} with ${winner.hand.description}`);
+            // High Winners (Always run)
+            const highWinnerData = determineWinners(potContenders.map(c => ({ id: c.id, hand: c.hand })));
+            highWinners = potContenders.filter(c => highWinnerData.some(w => w.id === c.id));
 
-                allWinners.push({ ...winner, prize, potIndex, handDescription: winner.hand.description });
-            });
+            // Distribute High Pot
+            if (highWinners.length > 0) {
+                const winAmount = Math.floor(highPot / highWinners.length);
+                const remainder = highPot % highWinners.length;
+
+                highWinners.forEach((winner, index) => {
+                    const prize = winAmount + (index === 0 ? remainder : 0);
+                    winner.player.chipStack += prize;
+                    totalDistributed += prize;
+
+                    this.logHistory('WINNER', winner.player.id, undefined, prize, undefined,
+                        `${winner.player.username} wins ${prize}${isHiLo ? ' (High)' : ''} from ${pot.isMainPot ? 'Main Pot' : 'Side Pot #' + potIndex} with ${winner.hand.description}`);
+
+                    allWinners.push({ ...winner, prize, potIndex, handDescription: winner.hand.description });
+                });
+            }
+
+            // Distribute Low Pot
+            if (lowWinners.length > 0) {
+                const winAmount = Math.floor(lowPot / lowWinners.length);
+                const remainder = lowPot % lowWinners.length;
+
+                lowWinners.forEach((winner, index) => {
+                    const prize = winAmount + (index === 0 ? remainder : 0);
+                    winner.player.chipStack += prize;
+                    totalDistributed += prize;
+
+                    this.logHistory('WINNER', winner.player.id, undefined, prize, undefined,
+                        `${winner.player.username} wins ${prize} (Low) from ${pot.isMainPot ? 'Main Pot' : 'Side Pot #' + potIndex} with ${winner.handLow?.description}`);
+
+                    allWinners.push({ ...winner, prize, potIndex, handDescription: winner.handLow?.description });
+                });
+            }
         });
 
         this.emit('HAND_COMPLETE', { winners: allWinners, pot: totalDistributed });
