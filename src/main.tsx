@@ -15,7 +15,7 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ReactDOM from 'react-dom/client';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -23,10 +23,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { PokerLobby } from './poker/components/PokerLobby';
 import { PokerRoom } from './poker/components/PokerRoom';
 import { CreateTableModal } from './poker/components/CreateTableModal';
+import { AuthModal } from './poker/components/AuthModal';
 import { usePokerLobby } from './poker/hooks/usePoker';
 
 // Utilities
-import { isSupabaseConfigured, getConnectionInfo } from './lib/supabase';
+import { supabase, isSupabaseConfigured, getConnectionInfo } from './lib/supabase';
 
 // Styles
 import './styles/arena-globals.css';
@@ -172,11 +173,72 @@ const App: React.FC = () => {
     const [view, setView] = useState<AppView>('loading');
     const [currentTableId, setCurrentTableId] = useState<string | null>(null);
     const [showCreateModal, setShowCreateModal] = useState(false);
-    const [userBalance] = useState(10000); // Demo balance
-    const userId = 'demo-user-' + Math.random().toString(36).slice(2, 8);
+    const [showAuthModal, setShowAuthModal] = useState(false);
+
+    // User state
+    const [userId, setUserId] = useState<string | null>(null);
+    const [userBalance, setUserBalance] = useState(10000); // Demo balance
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     // Get createTable from lobby hook
     const { createTable } = usePokerLobby();
+
+    // Check for existing session on mount
+    useEffect(() => {
+        const checkSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (session?.user) {
+                setUserId(session.user.id);
+                setIsAuthenticated(true);
+                fetchUserBalance(session.user.id);
+            }
+        };
+        checkSession();
+
+        // Listen for auth changes
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(
+            async (event, session) => {
+                if (session?.user) {
+                    setUserId(session.user.id);
+                    setIsAuthenticated(true);
+                    fetchUserBalance(session.user.id);
+                } else {
+                    setUserId(null);
+                    setIsAuthenticated(false);
+                    setUserBalance(10000); // Reset to demo balance
+                }
+            }
+        );
+
+        return () => subscription.unsubscribe();
+    }, []);
+
+    // Fetch user's diamond balance
+    const fetchUserBalance = useCallback(async (uid: string) => {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('diamond_balance')
+            .eq('id', uid)
+            .single();
+
+        if (data && !error) {
+            setUserBalance(data.diamond_balance || 10000);
+        }
+    }, []);
+
+    const handleAuthSuccess = useCallback((uid: string) => {
+        setUserId(uid);
+        setIsAuthenticated(true);
+        fetchUserBalance(uid);
+        setShowAuthModal(false);
+    }, [fetchUserBalance]);
+
+    const handleLogout = useCallback(async () => {
+        await supabase.auth.signOut();
+        setUserId(null);
+        setIsAuthenticated(false);
+        setUserBalance(10000);
+    }, []);
 
     const handleJoinTable = (tableId: string) => {
         setCurrentTableId(tableId);
@@ -219,7 +281,65 @@ const App: React.FC = () => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.4 }}
+                        style={{ position: 'relative' }}
                     >
+                        {/* Auth Header Bar */}
+                        <div style={{
+                            position: 'absolute',
+                            top: 12,
+                            right: 32,
+                            zIndex: 10,
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 12,
+                        }}>
+                            {isAuthenticated ? (
+                                <>
+                                    <span style={{
+                                        color: '#00FF88',
+                                        fontSize: 12,
+                                        padding: '4px 10px',
+                                        background: 'rgba(0,255,136,0.1)',
+                                        borderRadius: 100,
+                                    }}>
+                                        ✓ Logged In
+                                    </span>
+                                    <button
+                                        onClick={handleLogout}
+                                        style={{
+                                            padding: '8px 16px',
+                                            borderRadius: 6,
+                                            border: '1px solid rgba(255,255,255,0.2)',
+                                            background: 'transparent',
+                                            color: 'rgba(255,255,255,0.6)',
+                                            fontSize: 13,
+                                            cursor: 'pointer',
+                                        }}
+                                    >
+                                        Sign Out
+                                    </button>
+                                </>
+                            ) : (
+                                <motion.button
+                                    whileHover={{ scale: 1.02 }}
+                                    whileTap={{ scale: 0.98 }}
+                                    onClick={() => setShowAuthModal(true)}
+                                    style={{
+                                        padding: '10px 24px',
+                                        borderRadius: 8,
+                                        border: 'none',
+                                        background: 'linear-gradient(180deg, #FFB800 0%, #CC9400 100%)',
+                                        color: '#000',
+                                        fontSize: 13,
+                                        fontWeight: 600,
+                                        cursor: 'pointer',
+                                    }}
+                                >
+                                    🔐 Login / Sign Up
+                                </motion.button>
+                            )}
+                        </div>
+
                         <PokerLobby
                             onJoinTable={handleJoinTable}
                             onCreateTable={handleOpenCreateModal}
@@ -238,7 +358,7 @@ const App: React.FC = () => {
                     >
                         <PokerRoom
                             tableId={currentTableId}
-                            userId={userId}
+                            userId={userId || `demo-${Math.random().toString(36).slice(2, 8)}`}
                             onLeaveTable={handleLeaveTable}
                         />
                     </motion.div>
@@ -250,6 +370,13 @@ const App: React.FC = () => {
                 isOpen={showCreateModal}
                 onClose={() => setShowCreateModal(false)}
                 onCreate={handleCreateTable}
+            />
+
+            {/* Auth Modal */}
+            <AuthModal
+                isOpen={showAuthModal}
+                onClose={() => setShowAuthModal(false)}
+                onSuccess={handleAuthSuccess}
             />
         </>
     );
