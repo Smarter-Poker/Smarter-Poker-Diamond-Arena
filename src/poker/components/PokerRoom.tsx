@@ -21,6 +21,7 @@ import { PotOddsCalculator } from './PotOddsCalculator';
 import { useGameSettings } from '../hooks/useGameSettings';
 import { analyzeHandStrength } from '../engine/hand-strength';
 import { useGameEffects } from '../hooks/useGameEffects';
+import { useAutoAction } from '../hooks/useAutoAction';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🎰 POKER ROOM COMPONENT — LIVE MULTIPLAYER
@@ -60,6 +61,7 @@ export const PokerRoom: React.FC<PokerRoomProps> = ({
     const [showSettings, setShowSettings] = useState(false);
     const [showLeaderboard, setShowLeaderboard] = useState(false);
     const [showSeatPicker, setShowSeatPicker] = useState(false);
+    const [preActionMode, setPreActionMode] = useState<'CHECK_FOLD' | 'CALL_ANY' | null>(null);
     const [buyInAmount, setBuyInAmount] = useState(1000);
     const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
     const [messages, setMessages] = useState<{ id: string; userId: string; username: string; message: string; timestamp: Date; type: 'CHAT' | 'SYSTEM' | 'EMOTE' | 'ACTION' }[]>([]);
@@ -109,6 +111,16 @@ export const PokerRoom: React.FC<PokerRoomProps> = ({
             setActionError(err instanceof Error ? err.message : 'Action failed');
         }
     }, [sendAction]);
+
+    // Integrate Auto-Action (Pre-moves)
+    useAutoAction(
+        tableState,
+        isMyTurn,
+        preActionMode,
+        setPreActionMode,
+        handleAction,
+        heroSeat
+    );
 
     // Handle seating
     const handleSeat = useCallback(async () => {
@@ -508,6 +520,8 @@ export const PokerRoom: React.FC<PokerRoomProps> = ({
                         minRaise={tableState.minRaise}
                         potSize={totalPot}
                         onAction={handleAction}
+                        preAction={preActionMode}
+                        onPreActionChange={setPreActionMode}
                     />
                 ) : (
                     <div style={{

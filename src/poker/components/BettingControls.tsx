@@ -36,6 +36,8 @@ interface BettingControlsProps {
     potSize: number;
     onAction: (action: ActionType, amount?: number) => void;
     disabled?: boolean;
+    preAction?: 'CHECK_FOLD' | 'CALL_ANY' | null;
+    onPreActionChange?: (action: 'CHECK_FOLD' | 'CALL_ANY' | null) => void;
 }
 
 export const BettingControls: React.FC<BettingControlsProps> = ({
@@ -48,6 +50,8 @@ export const BettingControls: React.FC<BettingControlsProps> = ({
     potSize,
     onAction,
     disabled = false,
+    preAction = null,
+    onPreActionChange,
 }) => {
     const [betAmount, setBetAmount] = useState(minBet);
     const [isSliderOpen, setIsSliderOpen] = useState(false);
@@ -123,12 +127,34 @@ export const BettingControls: React.FC<BettingControlsProps> = ({
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
-                    padding: 16,
-                    color: 'rgba(255,255,255,0.4)',
-                    fontSize: 14,
+                    padding: 8,
+                    background: 'rgba(0,0,0,0.6)',
+                    borderRadius: 12,
+                    border: '1px solid rgba(255,255,255,0.1)',
                 }}
             >
-                Waiting for your turn...
+                {/* Pre-Action Logic Handled via Parent - here we just show buttons */}
+                <div style={{ display: 'flex', gap: 10 }}>
+                    <label style={{ color: preAction === 'CHECK_FOLD' ? '#FFF' : '#aaa', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+                        <input
+                            type="checkbox"
+                            checked={preAction === 'CHECK_FOLD'}
+                            onChange={() => onPreActionChange?.(preAction === 'CHECK_FOLD' ? null : 'CHECK_FOLD')}
+                        />
+                        Check/Fold
+                    </label>
+                    <label style={{ color: preAction === 'CALL_ANY' ? '#FFF' : '#aaa', fontSize: 13, display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer' }}>
+                        <input
+                            type="checkbox"
+                            checked={preAction === 'CALL_ANY'}
+                            onChange={() => onPreActionChange?.(preAction === 'CALL_ANY' ? null : 'CALL_ANY')}
+                        />
+                        Call Any
+                    </label>
+                    <span style={{ marginLeft: 10, color: '#666', borderLeft: '1px solid #444', paddingLeft: 10 }}>
+                        Waiting for action...
+                    </span>
+                </div>
             </motion.div>
         );
     }
