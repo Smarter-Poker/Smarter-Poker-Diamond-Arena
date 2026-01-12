@@ -28,4 +28,5 @@ export { PokerLobby } from './components/PokerLobby';
 export { PokerRoom } from './components/PokerRoom';
 export { CreateTableModal } from './components/CreateTableModal';
 export { AuthModal } from './components/AuthModal';
+export { UserProfileHeader } from './components/UserProfileHeader';
 
