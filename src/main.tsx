@@ -22,6 +22,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 // Poker Components
 import { PokerLobby } from './poker/components/PokerLobby';
 import { PokerRoom } from './poker/components/PokerRoom';
+import { CreateTableModal } from './poker/components/CreateTableModal';
+import { usePokerLobby } from './poker/hooks/usePoker';
 
 // Utilities
 import { isSupabaseConfigured, getConnectionInfo } from './lib/supabase';
@@ -169,19 +171,30 @@ type AppView = 'loading' | 'lobby' | 'table';
 const App: React.FC = () => {
     const [view, setView] = useState<AppView>('loading');
     const [currentTableId, setCurrentTableId] = useState<string | null>(null);
+    const [showCreateModal, setShowCreateModal] = useState(false);
     const [userBalance] = useState(10000); // Demo balance
     const userId = 'demo-user-' + Math.random().toString(36).slice(2, 8);
+
+    // Get createTable from lobby hook
+    const { createTable } = usePokerLobby();
 
     const handleJoinTable = (tableId: string) => {
         setCurrentTableId(tableId);
         setView('table');
     };
 
-    const handleCreateTable = () => {
-        // For demo, just join a new table
-        const newTableId = 'table-' + Date.now();
-        setCurrentTableId(newTableId);
-        setView('table');
+    const handleOpenCreateModal = () => {
+        setShowCreateModal(true);
+    };
+
+    const handleCreateTable = async (config: Parameters<typeof createTable>[0]) => {
+        const result = await createTable(config);
+        if (result.success && result.tableId) {
+            // Auto-join the newly created table
+            setCurrentTableId(result.tableId);
+            setView('table');
+        }
+        return result;
     };
 
     const handleLeaveTable = () => {
@@ -190,46 +203,55 @@ const App: React.FC = () => {
     };
 
     return (
-        <AnimatePresence mode="wait">
-            {view === 'loading' && (
-                <LoadingScreen
-                    key="loading"
-                    onComplete={() => setView('lobby')}
-                />
-            )}
-
-            {view === 'lobby' && (
-                <motion.div
-                    key="lobby"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.4 }}
-                >
-                    <PokerLobby
-                        onJoinTable={handleJoinTable}
-                        onCreateTable={handleCreateTable}
-                        userBalance={userBalance}
+        <>
+            <AnimatePresence mode="wait">
+                {view === 'loading' && (
+                    <LoadingScreen
+                        key="loading"
+                        onComplete={() => setView('lobby')}
                     />
-                </motion.div>
-            )}
+                )}
 
-            {view === 'table' && currentTableId && (
-                <motion.div
-                    key="table"
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.4 }}
-                >
-                    <PokerRoom
-                        tableId={currentTableId}
-                        userId={userId}
-                        onLeaveTable={handleLeaveTable}
-                    />
-                </motion.div>
-            )}
-        </AnimatePresence>
+                {view === 'lobby' && (
+                    <motion.div
+                        key="lobby"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.4 }}
+                    >
+                        <PokerLobby
+                            onJoinTable={handleJoinTable}
+                            onCreateTable={handleOpenCreateModal}
+                            userBalance={userBalance}
+                        />
+                    </motion.div>
+                )}
+
+                {view === 'table' && currentTableId && (
+                    <motion.div
+                        key="table"
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ duration: 0.4 }}
+                    >
+                        <PokerRoom
+                            tableId={currentTableId}
+                            userId={userId}
+                            onLeaveTable={handleLeaveTable}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Create Table Modal */}
+            <CreateTableModal
+                isOpen={showCreateModal}
+                onClose={() => setShowCreateModal(false)}
+                onCreate={handleCreateTable}
+            />
+        </>
     );
 };
 

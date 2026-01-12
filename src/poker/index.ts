@@ -26,4 +26,5 @@ export { PokerTable } from './components/PokerTable';
 export { BettingControls } from './components/BettingControls';
 export { PokerLobby } from './components/PokerLobby';
 export { PokerRoom } from './components/PokerRoom';
+export { CreateTableModal } from './components/CreateTableModal';
 
