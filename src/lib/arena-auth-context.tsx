@@ -16,7 +16,11 @@ import React, {
     useMemo,
     type ReactNode
 } from 'react';
-import { createClient, type User, type Session, type SupabaseClient } from '@supabase/supabase-js';
+import { type User, type Session, type SupabaseClient } from '@supabase/supabase-js';
+import { supabase as supabaseClient, isSupabaseConfigured } from './supabase';
+
+// Use the centralized supabase client
+const supabase = supabaseClient;
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🏛️ TYPE DEFINITIONS
@@ -80,24 +84,10 @@ export interface ArenaActions {
 
 type ArenaContextValue = ArenaState & ArenaActions;
 
-// ═══════════════════════════════════════════════════════════════════════════
-// 🔧 SUPABASE CLIENT INITIALIZATION
-// ═══════════════════════════════════════════════════════════════════════════
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
-
-if (!supabaseUrl || !supabaseAnonKey) {
+// Log configuration status
+if (!isSupabaseConfigured()) {
     console.warn('⚠️ VOID_GATE: Supabase credentials not configured. Auth will be disabled.');
 }
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-    auth: {
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true,
-    },
-});
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🌌 CONTEXT CREATION

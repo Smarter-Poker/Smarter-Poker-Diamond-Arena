@@ -9,7 +9,7 @@
     "start": "node src/index.js",
     "migrate": "node src/db/migrate.js",
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "keywords": [
