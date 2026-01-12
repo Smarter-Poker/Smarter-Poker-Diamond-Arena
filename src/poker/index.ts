@@ -32,4 +32,6 @@ export { UserProfileHeader } from './components/UserProfileHeader';
 export { HandHistoryPanel } from './components/HandHistoryPanel';
 export { TableSettingsPanel } from './components/TableSettingsPanel';
 export { ChatPanel } from './components/ChatPanel';
+export { LeaderboardPanel } from './components/LeaderboardPanel';
+export { QuickActionsHUD } from './components/QuickActionsHUD';
 
