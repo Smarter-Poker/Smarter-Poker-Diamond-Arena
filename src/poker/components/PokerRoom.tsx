@@ -20,6 +20,7 @@ import { QuickActionsHUD } from './QuickActionsHUD';
 import { PotOddsCalculator } from './PotOddsCalculator';
 import { useGameSettings } from '../hooks/useGameSettings';
 import { analyzeHandStrength } from '../engine/hand-strength';
+import { useGameEffects } from '../hooks/useGameEffects';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🎰 POKER ROOM COMPONENT — LIVE MULTIPLAYER
@@ -95,6 +96,9 @@ export const PokerRoom: React.FC<PokerRoomProps> = ({
 
     // Calculate pot total
     const totalPot = tableState?.pots.reduce((sum, pot) => sum + pot.amount, 0) ?? 0;
+
+    // Integrate Sound & Animation Effects
+    useGameEffects(tableState, isMyTurn, userId);
 
     // Handle player action
     const handleAction = useCallback(async (action: ActionType, amount?: number) => {
