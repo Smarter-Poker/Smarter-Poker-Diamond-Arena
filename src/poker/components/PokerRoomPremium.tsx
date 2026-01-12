@@ -5,13 +5,13 @@
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PokerTablePremium } from './PokerTablePremium';
 import { ActionControls } from './ActionControls';
 import { TableMenu, MenuButton } from './TableMenu';
 import { useSimulatedTable } from '../hooks/useSimulatedTable';
-import { usePokerTable } from '../hooks/usePoker';
+import { usePokerTable, dbRowToTableConfig, dbRowToPlayer } from '../hooks/usePoker';
 import type { ActionType, TableState } from '../types/poker';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -49,7 +49,8 @@ export const PokerRoomPremium: React.FC<PokerRoomPremiumProps> = ({
         seatPlayer,
         leaveTable,
         sendAction,
-        engine,
+        heroSeat: hookHeroSeat,
+        isMyTurn,
     } = table;
 
     // For simulated tables, track updateTrigger to force re-renders
@@ -60,11 +61,39 @@ export const PokerRoomPremium: React.FC<PokerRoomPremiumProps> = ({
         forceUpdate(prev => prev + 1);
     }, [updateTrigger]);
 
-    // Get current state from engine (simulated) or reconstruct (realtime)
-    const state = engine?.getState() || null;
+    // Build TableState from live data (same approach as PokerRoom)
+    const state: TableState | null = useMemo(() => {
+        if (!tableInfo) return null;
+
+        const config = dbRowToTableConfig(tableInfo);
+        const seats: (ReturnType<typeof dbRowToPlayer> | null)[] = new Array(config.tableSize).fill(null);
+
+        // Populate seats
+        players.forEach(p => {
+            if (p.seat_number >= 1 && p.seat_number <= config.tableSize) {
+                seats[p.seat_number - 1] = dbRowToPlayer(p, userId);
+            }
+        });
+
+        return {
+            config,
+            handNumber: tableInfo.hand_number,
+            street: tableInfo.current_street as any,
+            communityCards: tableInfo.community_cards || [],
+            pots: [{ amount: tableInfo.pot_total, eligiblePlayers: players.map(p => p.user_id) }],
+            currentBet: tableInfo.current_bet,
+            minRaise: tableInfo.min_raise || config.bigBlind,
+            seats,
+            dealerSeat: tableInfo.dealer_seat || undefined,
+            smallBlindSeat: tableInfo.small_blind_seat || undefined,
+            bigBlindSeat: tableInfo.big_blind_seat || undefined,
+            activePlayerSeat: tableInfo.active_player_seat || undefined,
+        };
+    }, [tableInfo, players, userId]);
+
     const heroPlayer = state?.seats.find(p => p?.id === userId) || null;
-    const heroSeat = heroPlayer?.seatNumber || null;
-    const isHeroTurn = heroPlayer?.isTurn || false;
+    const heroSeat = hookHeroSeat || heroPlayer?.seatNumber || null;
+    const isHeroTurn = isMyTurn || heroPlayer?.isTurn || false;
 
     // Timer countdown when it's hero's turn
     useEffect(() => {
