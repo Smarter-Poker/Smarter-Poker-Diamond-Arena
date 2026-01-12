@@ -326,60 +326,7 @@ const PremiumSeat: React.FC<PremiumSeatProps> = ({
                 </motion.div>
             )}
 
-            {/* Hero's Hole Cards */}
-            {isHero && player.holeCards && player.holeCards.length > 0 && (
-                <div
-                    style={{
-                        position: 'absolute',
-                        bottom: '100%',
-                        left: '50%',
-                        transform: 'translateX(-50%)',
-                        display: 'flex',
-                        gap: 2,
-                        marginBottom: 8,
-                    }}
-                >
-                    {player.holeCards.map((card, i) => (
-                        <motion.div
-                            key={i}
-                            initial={{ y: -20, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ delay: i * 0.1 }}
-                            style={{
-                                transform: `rotate(${(i - (player.holeCards!.length - 1) / 2) * 5}deg)`,
-                            }}
-                        >
-                            <PlayingCard
-                                card={card}
-                                size="large"
-                                fourColorDeck={fourColorDeck}
-                            />
-                        </motion.div>
-                    ))}
-                </div>
-            )}
-
-            {/* Non-Hero Hole Cards (face down or face up) */}
-            {!isHero && player.holeCards && (
-                <div
-                    style={{
-                        position: 'absolute',
-                        top: -35,
-                        display: 'flex',
-                        gap: -8,
-                    }}
-                >
-                    {player.holeCards.map((card, i) => (
-                        <PlayingCard
-                            key={i}
-                            card={card}
-                            size="small"
-                            faceDown={!card}
-                            fourColorDeck={fourColorDeck}
-                        />
-                    ))}
-                </div>
-            )}
+// Removed card rendering from PremiumSeat
         </motion.div>
     );
 };
@@ -623,7 +570,7 @@ export const PokerTablePremium: React.FC<PokerTablePremiumProps> = ({
 
                 return (
                     <PremiumSeat
-                        key={seatNumber}
+                        key={`seat-${seatNumber}`}
                         player={player}
                         seatNumber={seatNumber}
                         x={pos.x}
@@ -640,6 +587,94 @@ export const PokerTablePremium: React.FC<PokerTablePremiumProps> = ({
                     />
                 );
             })}
+
+            {/* Card Layer (Renders cards with dealing animation) */}
+            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 40 }}>
+                <AnimatePresence>
+                    {state.seats.map((player, index) => {
+                        if (!player || !player.holeCards || player.holeCards.length === 0) return null;
+
+                        const pos = SEAT_POSITIONS_6[index];
+                        const isHero = player.id === heroId;
+                        const seatNumber = index + 1;
+
+                        // Dealing origin (center of table approx)
+                        const dealOriginX = 50;
+                        const dealOriginY = 45;
+
+                        // Calculate offset from center to seat
+                        // (We animate FROM center TO seat position)
+                        // xDelta and yDelta are the travel distance in %
+                        const initialX = `${dealOriginX - pos.x}%`;
+                        const initialY = `${dealOriginY - pos.y}%`;
+
+                        return (
+                            <div
+                                key={`cards-${seatNumber}`}
+                                style={{
+                                    position: 'absolute',
+                                    left: `${pos.x}%`,
+                                    top: `${pos.y}%`,
+                                    // Adjust positioning wrapper
+                                    transform: 'translate(-50%, -50%)',
+                                    width: 0, height: 0, // Wrapper has no size, cards spill out
+                                    visible: 'visible' // ensure visibility
+                                }}
+                            >
+                                <div style={{
+                                    position: 'absolute',
+                                    // Anchor cards relative to seat center
+                                    bottom: isHero ? 60 : undefined,
+                                    top: isHero ? undefined : -45,
+                                    left: isHero ? 0 : 0,
+                                    transform: 'translateX(-50%)',
+                                    display: 'flex',
+                                    gap: isHero ? 2 : -15, // Tighter overlap for opponents
+                                    justifyContent: 'center',
+                                    width: 100 // Constraint width
+                                }}>
+                                    {player.holeCards.map((card, i) => (
+                                        <motion.div
+                                            key={`card-${seatNumber}-${i}`}
+                                            initial={{
+                                                x: (dealOriginX - pos.x) * 3, // Approximate pixel scaling for %
+                                                y: (dealOriginY - pos.y) * 3, // Roughly convert % to px distance
+                                                scale: 0,
+                                                opacity: 0
+                                            }}
+                                            animate={{
+                                                x: 0,
+                                                y: 0,
+                                                scale: 1,
+                                                opacity: 1
+                                            }}
+                                            transition={{
+                                                duration: 0.6,
+                                                delay: i * 0.1 + index * 0.05, // Stagger deal around table
+                                                ease: "backOut"
+                                            }}
+                                            style={{
+                                                transformOrigin: 'center center',
+                                                // Hero Fan Rotation
+                                                rotate: isHero
+                                                    ? (i - (player.holeCards!.length - 1) / 2) * 5
+                                                    : 0
+                                            }}
+                                        >
+                                            <PlayingCard
+                                                card={card}
+                                                size={isHero ? "large" : "small"}
+                                                faceDown={!isHero && !card} // Face down for opponents unless revealed
+                                                fourColorDeck={fourColorDeck}
+                                            />
+                                        </motion.div>
+                                    ))}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </AnimatePresence>
+            </div>
 
             {/* Observers Badge */}
             <div
