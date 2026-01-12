@@ -29,4 +29,7 @@ export { PokerRoom } from './components/PokerRoom';
 export { CreateTableModal } from './components/CreateTableModal';
 export { AuthModal } from './components/AuthModal';
 export { UserProfileHeader } from './components/UserProfileHeader';
+export { HandHistoryPanel } from './components/HandHistoryPanel';
+export { TableSettingsPanel } from './components/TableSettingsPanel';
+export { ChatPanel } from './components/ChatPanel';
 
