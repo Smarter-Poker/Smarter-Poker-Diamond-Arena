@@ -1,17 +1,10 @@
 /**
- * 🎰 DIAMOND ARENA — MAIN ENTRY POINT
+ * 🎰 DIAMOND ARENA — MAIN ENTRY POINT (PREMIUM)
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  * ONLINE POKER ROOM — PLAY FOR DIAMONDS 💎
  * 
- * NOT a training platform. This is a FULLY FUNCTIONING POKER ROOM where
- * users play Texas Hold'em against each other, wagering Diamonds as currency.
- * 
- * Features:
- * - Lobby with available cash games and tournaments
- * - Live multiplayer tables with real-time updates
- * - Full betting controls (Fold/Check/Call/Bet/Raise/All-In)
- * - Community cards, pot display, player seats
- * - Hand history and showdown logic
+ * Premium PokerBros-style UI with separated Cash Games and Tournaments.
+ * All tables admin-created — no "Create Table" button for users.
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
 
@@ -20,18 +13,62 @@ import ReactDOM from 'react-dom/client';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Poker Components
-import { PokerLobby } from './poker/components/PokerLobby';
 import { PokerRoom } from './poker/components/PokerRoom';
 import { PokerRoomPremium } from './poker/components/PokerRoomPremium';
-import { CreateTableModal } from './poker/components/CreateTableModal';
+import { PokerLobbyPremium } from './poker/components/PokerLobbyPremium';
+import { TournamentDetailsPage } from './poker/components/tournament/TournamentDetailsPage';
+import { CashBuyInModal } from './poker/components/cash/CashBuyInModal';
+import { HandReplayPage } from './poker/components/replay/HandReplayPage';
 import { AuthModal } from './poker/components/AuthModal';
-import { usePokerLobby } from './poker/hooks/usePoker';
+import type { PokerVariant, Card } from './poker/types/poker';
 
 // Utilities
 import { supabase, isSupabaseConfigured, getConnectionInfo } from './lib/supabase';
 
 // Styles
 import './styles/arena-globals.css';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 📊 TYPES
+// ═══════════════════════════════════════════════════════════════════════════
+
+type AppView = 'loading' | 'lobby' | 'table' | 'tournament-details' | 'hand-history' | 'hand-replay';
+
+interface TournamentData {
+    id: string;
+    name: string;
+    description: string;
+    variant: PokerVariant;
+    tableSize: number;
+    buyIn: number;
+    fee: number;
+    prizePool: number;
+    guaranteedPool: number;
+    startTime: Date;
+    status: 'REGISTERING' | 'LATE_REG' | 'RUNNING' | 'COMPLETED';
+    entryCount: number;
+    entriesRange: string;
+    maxEntries: number;
+    blindsUp: number;
+    lateRegLevel: number;
+    currentLevel: number;
+    remainingPlayers: number;
+    avgStack: number;
+    startingChips: number;
+    isReentry: boolean;
+    reentryLimit: number | null;
+    hasAddon: boolean;
+    hasBigBlindAnte: boolean;
+    blindStructure: string;
+    earlyBirdBonus: string | null;
+}
+
+interface CashTableData {
+    id: string;
+    name: string;
+    minBuyIn: number;
+    maxBuyIn: number;
+}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🌌 LOADING SCREEN
@@ -118,30 +155,28 @@ const LoadingScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => 
                     marginBottom: 48,
                 }}
             >
-                ONLINE POKER • PLAY FOR DIAMONDS
+                Online Poker • Play for Diamonds
             </motion.p>
 
-            {/* Progress Bar */}
-            <motion.div
-                style={{
-                    width: 200,
-                    height: 3,
-                    background: 'rgba(255,255,255,0.1)',
-                    borderRadius: 2,
-                    overflow: 'hidden',
-                }}
-            >
+            {/* Loading Bar */}
+            <div style={{
+                width: 200,
+                height: 4,
+                background: 'rgba(255,255,255,0.1)',
+                borderRadius: 2,
+                overflow: 'hidden',
+            }}>
                 <motion.div
-                    initial={{ width: '0%' }}
-                    animate={{ width: '100%' }}
-                    transition={{ duration: 1.8, ease: 'easeInOut' }}
+                    initial={{ x: '-100%' }}
+                    animate={{ x: '100%' }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: 'easeInOut' }}
                     style={{
+                        width: '50%',
                         height: '100%',
-                        background: 'linear-gradient(90deg, #00E0FF, #FFB800)',
-                        borderRadius: 2,
+                        background: 'linear-gradient(90deg, transparent, #FFB800, transparent)',
                     }}
                 />
-            </motion.div>
+            </div>
 
             {/* Connection Status */}
             <motion.p
@@ -165,24 +200,113 @@ const LoadingScreen: React.FC<{ onComplete: () => void }> = ({ onComplete }) => 
 };
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 🎰 MAIN APP
+// 🃏 HAND HISTORY VIEW
 // ═══════════════════════════════════════════════════════════════════════════
 
-type AppView = 'loading' | 'lobby' | 'table';
+interface HandHistoryEntry {
+    id: string;
+    handNumber: number;
+    timestamp: Date;
+    tableName: string;
+    variant: PokerVariant;
+    result: number;
+    mainPot: number;
+}
+
+const HandHistoryView: React.FC<{
+    onBack: () => void;
+    onViewHand: (handId: string) => void;
+}> = ({ onBack, onViewHand }) => {
+    // Demo hand history
+    const [hands] = useState<HandHistoryEntry[]>([
+        { id: 'hand-1', handNumber: 1, timestamp: new Date(Date.now() - 60000), tableName: 'Diamond Ring', variant: 'NLH', result: 450, mainPot: 900 },
+        { id: 'hand-2', handNumber: 2, timestamp: new Date(Date.now() - 120000), tableName: 'Diamond Ring', variant: 'NLH', result: -200, mainPot: 400 },
+        { id: 'hand-3', handNumber: 3, timestamp: new Date(Date.now() - 180000), tableName: 'PLO Action', variant: 'PLO', result: 1200, mainPot: 2400 },
+        { id: 'hand-4', handNumber: 4, timestamp: new Date(Date.now() - 240000), tableName: 'Low Stakes', variant: 'NLH', result: 0, mainPot: 60 },
+        { id: 'hand-5', handNumber: 5, timestamp: new Date(Date.now() - 300000), tableName: 'PLO Action', variant: 'PLO', result: -500, mainPot: 1000 },
+    ]);
+
+    return (
+        <div style={{ minHeight: '100vh', background: '#0A1628', color: '#FFF' }}>
+            {/* Header */}
+            <header style={{
+                display: 'flex',
+                alignItems: 'center',
+                padding: '16px 20px',
+                borderBottom: '1px solid rgba(255,255,255,0.1)',
+            }}>
+                <motion.button
+                    whileTap={{ scale: 0.95 }}
+                    onClick={onBack}
+                    style={{
+                        background: 'transparent',
+                        border: 'none',
+                        color: '#00AAFF',
+                        fontSize: 20,
+                        cursor: 'pointer',
+                        marginRight: 16,
+                    }}
+                >
+                    ‹‹
+                </motion.button>
+                <span style={{ fontSize: 18, fontWeight: 600 }}>🃏 Hand History</span>
+            </header>
+
+            {/* Hand List */}
+            <div style={{ padding: 20 }}>
+                {hands.map(hand => (
+                    <motion.div
+                        key={hand.id}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => onViewHand(hand.id)}
+                        style={{
+                            padding: 16,
+                            marginBottom: 12,
+                            background: 'rgba(0,0,0,0.3)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            borderRadius: 12,
+                            cursor: 'pointer',
+                        }}
+                    >
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                            <span style={{ fontWeight: 600 }}>{hand.tableName}</span>
+                            <span style={{
+                                color: hand.result > 0 ? '#00FF88' : hand.result < 0 ? '#FF4444' : 'rgba(255,255,255,0.5)',
+                                fontWeight: 600,
+                            }}>
+                                {hand.result > 0 ? '+' : ''}{hand.result} 💎
+                            </span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>
+                            <span>Hand #{hand.handNumber} • {hand.variant}</span>
+                            <span>Pot: {hand.mainPot}</span>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+// ═══════════════════════════════════════════════════════════════════════════
+// 🎰 MAIN APP
+// ═══════════════════════════════════════════════════════════════════════════
 
 const App: React.FC = () => {
     const [view, setView] = useState<AppView>('loading');
     const [currentTableId, setCurrentTableId] = useState<string | null>(null);
-    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [currentTournament, setCurrentTournament] = useState<TournamentData | null>(null);
+    const [currentHandReplayId, setCurrentHandReplayId] = useState<string | null>(null);
     const [showAuthModal, setShowAuthModal] = useState(false);
+    const [showBuyInModal, setShowBuyInModal] = useState(false);
+    const [pendingCashTable, setPendingCashTable] = useState<CashTableData | null>(null);
+    const [registeredTournaments, setRegisteredTournaments] = useState<Set<string>>(new Set());
 
     // User state
     const [userId, setUserId] = useState<string | null>(null);
-    const [userBalance, setUserBalance] = useState(10000); // Demo balance
+    const [userBalance, setUserBalance] = useState(10000);
+    const [username, setUsername] = useState('Guest');
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-    // Get createTable from lobby hook
-    const { createTable } = usePokerLobby();
 
     // Check for existing session on mount
     useEffect(() => {
@@ -191,7 +315,7 @@ const App: React.FC = () => {
             if (session?.user) {
                 setUserId(session.user.id);
                 setIsAuthenticated(true);
-                fetchUserBalance(session.user.id);
+                fetchUserProfile(session.user.id);
             }
         };
         checkSession();
@@ -202,11 +326,12 @@ const App: React.FC = () => {
                 if (session?.user) {
                     setUserId(session.user.id);
                     setIsAuthenticated(true);
-                    fetchUserBalance(session.user.id);
+                    fetchUserProfile(session.user.id);
                 } else {
                     setUserId(null);
                     setIsAuthenticated(false);
-                    setUserBalance(10000); // Reset to demo balance
+                    setUserBalance(10000);
+                    setUsername('Guest');
                 }
             }
         );
@@ -214,55 +339,198 @@ const App: React.FC = () => {
         return () => subscription.unsubscribe();
     }, []);
 
-    // Fetch user's diamond balance
-    const fetchUserBalance = useCallback(async (uid: string) => {
+    // Fetch user profile (balance + username)
+    const fetchUserProfile = useCallback(async (uid: string) => {
         const { data, error } = await supabase
             .from('profiles')
-            .select('diamond_balance')
+            .select('diamond_balance, username')
             .eq('id', uid)
             .single();
 
         if (data && !error) {
             setUserBalance(data.diamond_balance || 10000);
+            setUsername(data.username || 'Player');
         }
     }, []);
 
     const handleAuthSuccess = useCallback((uid: string) => {
         setUserId(uid);
         setIsAuthenticated(true);
-        fetchUserBalance(uid);
+        fetchUserProfile(uid);
         setShowAuthModal(false);
-    }, [fetchUserBalance]);
+    }, [fetchUserProfile]);
 
-    const handleLogout = useCallback(async () => {
-        await supabase.auth.signOut();
-        setUserId(null);
-        setIsAuthenticated(false);
-        setUserBalance(10000);
+    // ═══════════════════════════════════════════════════════════════════════
+    // 🎮 CASH GAME FLOW
+    // ═══════════════════════════════════════════════════════════════════════
+
+    const handleJoinCashTable = useCallback((tableId: string) => {
+        // For simulation tables, go directly
+        if (tableId.startsWith('sim-')) {
+            setCurrentTableId(tableId);
+            setView('table');
+            return;
+        }
+
+        // For real tables, show buy-in modal
+        // Demo: use placeholder data
+        setPendingCashTable({
+            id: tableId,
+            name: 'Cash Table',
+            minBuyIn: 200,
+            maxBuyIn: 2000,
+        });
+        setShowBuyInModal(true);
     }, []);
 
-    const handleJoinTable = (tableId: string) => {
-        setCurrentTableId(tableId);
-        setView('table');
-    };
-
-    const handleOpenCreateModal = () => {
-        setShowCreateModal(true);
-    };
-
-    const handleCreateTable = async (config: Parameters<typeof createTable>[0]) => {
-        const result = await createTable(config);
-        if (result.success && result.tableId) {
-            // Auto-join the newly created table
-            setCurrentTableId(result.tableId);
+    const handleBuyInConfirm = useCallback((amount: number, autoRebuy: boolean) => {
+        if (pendingCashTable) {
+            console.log(`Buying in for ${amount} with autoRebuy: ${autoRebuy}`);
+            setCurrentTableId(pendingCashTable.id);
+            setShowBuyInModal(false);
+            setPendingCashTable(null);
             setView('table');
         }
-        return result;
-    };
+    }, [pendingCashTable]);
 
-    const handleLeaveTable = () => {
+    const handleLeaveTable = useCallback(() => {
         setCurrentTableId(null);
         setView('lobby');
+    }, []);
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 🏆 TOURNAMENT FLOW
+    // ═══════════════════════════════════════════════════════════════════════
+
+    const handleViewTournament = useCallback((tournamentId: string) => {
+        // Demo tournament data
+        const demoTournament: TournamentData = {
+            id: tournamentId,
+            name: '15K GTD✨WEEKNIGHT✨',
+            description: '15K GTD NLH WEEKNIGHT / 65 BUY-IN / REBUY / NO ADD-ON',
+            variant: 'NLH',
+            tableSize: 9,
+            buyIn: 58.50,
+            fee: 6.50,
+            prizePool: 15000,
+            guaranteedPool: 15000,
+            startTime: new Date(Date.now() + 4 * 60 * 60 * 1000),
+            status: 'REGISTERING',
+            entryCount: 13,
+            entriesRange: '5-7K',
+            maxEntries: 500,
+            blindsUp: 10,
+            lateRegLevel: 15,
+            currentLevel: 0,
+            remainingPlayers: 13,
+            avgStack: 48000,
+            startingChips: 40000,
+            isReentry: true,
+            reentryLimit: null,
+            hasAddon: false,
+            hasBigBlindAnte: false,
+            blindStructure: 'Standard',
+            earlyBirdBonus: 'LVL 2/+20% chip',
+        };
+
+        setCurrentTournament(demoTournament);
+        setView('tournament-details');
+    }, []);
+
+    const handleTournamentRegister = useCallback(() => {
+        if (currentTournament) {
+            // Check balance
+            const totalBuyIn = currentTournament.buyIn + currentTournament.fee;
+            if (userBalance >= totalBuyIn) {
+                setUserBalance(prev => prev - totalBuyIn);
+                setRegisteredTournaments(prev => new Set(prev).add(currentTournament.id));
+                console.log(`Registered for tournament ${currentTournament.id}`);
+            } else {
+                alert('Insufficient balance!');
+            }
+        }
+    }, [currentTournament, userBalance]);
+
+    const handleTournamentShare = useCallback(() => {
+        if (currentTournament) {
+            const shareUrl = `https://diamond.smarter.poker/t/${currentTournament.id}`;
+            if (navigator.share) {
+                navigator.share({
+                    title: currentTournament.name,
+                    text: `Join me for ${currentTournament.name}!`,
+                    url: shareUrl,
+                });
+            } else {
+                navigator.clipboard.writeText(shareUrl);
+                alert('Link copied to clipboard!');
+            }
+        }
+    }, [currentTournament]);
+
+    // ═══════════════════════════════════════════════════════════════════════
+    // 🃏 HAND HISTORY FLOW
+    // ═══════════════════════════════════════════════════════════════════════
+
+    const handleNavigateToHandHistory = useCallback(() => {
+        setView('hand-history');
+    }, []);
+
+    const handleViewHandReplay = useCallback((handId: string) => {
+        setCurrentHandReplayId(handId);
+        setView('hand-replay');
+    }, []);
+
+    const handleShareHandReplay = useCallback(() => {
+        if (currentHandReplayId) {
+            const shareUrl = `https://s.smarter.poker/h/${currentHandReplayId}`;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Check out this hand!',
+                    text: 'Check out the hand I played on #DiamondArena',
+                    url: shareUrl,
+                });
+            } else {
+                navigator.clipboard.writeText(shareUrl);
+                alert('Link copied to clipboard!');
+            }
+        }
+    }, [currentHandReplayId]);
+
+    // Demo hand replay data
+    const demoHandReplay = {
+        handId: currentHandReplayId || 'demo',
+        serialNumber: '2049883074',
+        timestamp: new Date(),
+        variant: 'NLH' as PokerVariant,
+        tableId: 'table-1',
+        tableName: 'Diamond Ring',
+        blinds: '10/20',
+        handNumber: 5,
+        totalHands: 10,
+        mainPot: 2265,
+        sidePots: [],
+        communityCards: [
+            { rank: 'A', suit: 's' },
+            { rank: '5', suit: 's' },
+            { rank: '9', suit: 'd' },
+            { rank: '5', suit: 'h' },
+            { rank: '2', suit: 'h' },
+        ] as Card[],
+        players: [
+            { seatNumber: 1, playerId: 'p1', username: '-KingFish-', avatarUrl: null, position: 'UTG' as const, holeCards: [{ rank: 'Q', suit: 's' }, { rank: '4', suit: 'c' }] as Card[], finalHand: null, result: -10, potContribution: 10 },
+            { seatNumber: 2, playerId: 'p2', username: 'soul king', avatarUrl: null, position: 'BTN' as const, holeCards: [{ rank: 'A', suit: 'd' }, { rank: 'K', suit: 's' }] as Card[], finalHand: null, result: 0, potContribution: 0 },
+            { seatNumber: 3, playerId: 'p3', username: 'cubby2426', avatarUrl: null, position: 'SB' as const, holeCards: [{ rank: 'J', suit: 'h' }, { rank: '9', suit: 'h' }] as Card[], finalHand: null, result: -5, potContribution: 5 },
+            { seatNumber: 4, playerId: 'p4', username: 'Im gna CUM', avatarUrl: null, position: 'BB' as const, holeCards: [{ rank: 'K', suit: 'd' }, { rank: '3', suit: 's' }] as Card[], finalHand: 'One Pair', result: -1125, potContribution: 1125 },
+            { seatNumber: 5, playerId: 'p5', username: 'Wizurd', avatarUrl: null, position: 'MP' as const, holeCards: [{ rank: '7', suit: 'c' }, { rank: '7', suit: 'd' }] as Card[], finalHand: null, result: 0, potContribution: 0 },
+            { seatNumber: 6, playerId: 'p6', username: 'monkey88', avatarUrl: null, position: 'CO' as const, holeCards: [{ rank: 'T', suit: 'd' }, { rank: 'T', suit: 's' }] as Card[], finalHand: 'Two Pair', result: 1137.73, potContribution: 100 },
+        ],
+        actions: [
+            { street: 'preflop' as const, seatNumber: 1, action: 'CALL', amount: 20, timestamp: 1 },
+            { street: 'preflop' as const, seatNumber: 6, action: 'RAISE', amount: 60, timestamp: 2 },
+            { street: 'flop' as const, seatNumber: 4, action: 'CHECK', timestamp: 3 },
+        ],
+        winnerId: 'p6',
+        winnerSeat: 6,
     };
 
     return (
@@ -282,69 +550,13 @@ const App: React.FC = () => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.4 }}
-                        style={{ position: 'relative' }}
                     >
-                        {/* Auth Header Bar */}
-                        <div style={{
-                            position: 'absolute',
-                            top: 12,
-                            right: 32,
-                            zIndex: 10,
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 12,
-                        }}>
-                            {isAuthenticated ? (
-                                <>
-                                    <span style={{
-                                        color: '#00FF88',
-                                        fontSize: 12,
-                                        padding: '4px 10px',
-                                        background: 'rgba(0,255,136,0.1)',
-                                        borderRadius: 100,
-                                    }}>
-                                        ✓ Logged In
-                                    </span>
-                                    <button
-                                        onClick={handleLogout}
-                                        style={{
-                                            padding: '8px 16px',
-                                            borderRadius: 6,
-                                            border: '1px solid rgba(255,255,255,0.2)',
-                                            background: 'transparent',
-                                            color: 'rgba(255,255,255,0.6)',
-                                            fontSize: 13,
-                                            cursor: 'pointer',
-                                        }}
-                                    >
-                                        Sign Out
-                                    </button>
-                                </>
-                            ) : (
-                                <motion.button
-                                    whileHover={{ scale: 1.02 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    onClick={() => setShowAuthModal(true)}
-                                    style={{
-                                        padding: '10px 24px',
-                                        borderRadius: 8,
-                                        border: 'none',
-                                        background: 'linear-gradient(180deg, #FFB800 0%, #CC9400 100%)',
-                                        color: '#000',
-                                        fontSize: 13,
-                                        fontWeight: 600,
-                                        cursor: 'pointer',
-                                    }}
-                                >
-                                    🔐 Login / Sign Up
-                                </motion.button>
-                            )}
-                        </div>
-
-                        <PokerLobby
-                            onJoinTable={handleJoinTable}
-                            onCreateTable={handleOpenCreateModal}
+                        <PokerLobbyPremium
                             userBalance={userBalance}
+                            username={username}
+                            onJoinCashTable={handleJoinCashTable}
+                            onViewTournament={handleViewTournament}
+                            onNavigateToHandHistory={handleNavigateToHandHistory}
                         />
                     </motion.div>
                 )}
@@ -357,7 +569,6 @@ const App: React.FC = () => {
                         exit={{ opacity: 0, scale: 0.98 }}
                         transition={{ duration: 0.4 }}
                     >
-                        {/* Use Premium room for sim tables, regular for online */}
                         {currentTableId.startsWith('sim-') ? (
                             <PokerRoomPremium
                                 tableId={currentTableId}
@@ -373,13 +584,71 @@ const App: React.FC = () => {
                         )}
                     </motion.div>
                 )}
+
+                {view === 'tournament-details' && currentTournament && (
+                    <motion.div
+                        key="tournament"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <TournamentDetailsPage
+                            tournament={currentTournament}
+                            isRegistered={registeredTournaments.has(currentTournament.id)}
+                            onBack={() => setView('lobby')}
+                            onRegister={handleTournamentRegister}
+                            onShare={handleTournamentShare}
+                        />
+                    </motion.div>
+                )}
+
+                {view === 'hand-history' && (
+                    <motion.div
+                        key="hand-history"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <HandHistoryView
+                            onBack={() => setView('lobby')}
+                            onViewHand={handleViewHandReplay}
+                        />
+                    </motion.div>
+                )}
+
+                {view === 'hand-replay' && currentHandReplayId && (
+                    <motion.div
+                        key="hand-replay"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: -20 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                        <HandReplayPage
+                            handData={demoHandReplay}
+                            onClose={() => setView('hand-history')}
+                            onShare={handleShareHandReplay}
+                            onFavorite={() => console.log('Favorited')}
+                            onPlayVideo={() => console.log('Play video replay')}
+                        />
+                    </motion.div>
+                )}
             </AnimatePresence>
 
-            {/* Create Table Modal */}
-            <CreateTableModal
-                isOpen={showCreateModal}
-                onClose={() => setShowCreateModal(false)}
-                onCreate={handleCreateTable}
+            {/* Cash Buy-In Modal */}
+            <CashBuyInModal
+                isOpen={showBuyInModal}
+                onClose={() => {
+                    setShowBuyInModal(false);
+                    setPendingCashTable(null);
+                }}
+                onConfirm={handleBuyInConfirm}
+                minBuyIn={pendingCashTable?.minBuyIn || 200}
+                maxBuyIn={pendingCashTable?.maxBuyIn || 2000}
+                accountBalance={userBalance}
+                tableName={pendingCashTable?.name}
             />
 
             {/* Auth Modal */}

@@ -8,7 +8,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PlayingCard } from '../../PlayingCard';
+import { PlayingCard } from '../PlayingCard';
 import type { Card, PokerVariant } from '../../types/poker';
 
 // ═══════════════════════════════════════════════════════════════════════════
