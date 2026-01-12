@@ -94,6 +94,28 @@ export const PokerLobby: React.FC<PokerLobbyProps> = ({
                         </span>
                     </div>
 
+                    {/* Simulation Mode */}
+                    <motion.button
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => onJoinTable('sim-offline-1')}
+                        style={{
+                            padding: '12px 24px',
+                            borderRadius: 8,
+                            border: '1px solid rgba(0,224,255,0.3)',
+                            background: 'rgba(0,224,255,0.1)',
+                            color: '#00E0FF',
+                            fontSize: 14,
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 8,
+                        }}
+                    >
+                        🕹️ Offline Sim
+                    </motion.button>
+
                     {/* Create Table */}
                     <motion.button
                         whileHover={{ scale: 1.02 }}
