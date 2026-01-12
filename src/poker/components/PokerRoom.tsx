@@ -22,6 +22,7 @@ import { useGameSettings } from '../hooks/useGameSettings';
 import { analyzeHandStrength } from '../engine/hand-strength';
 import { useGameEffects } from '../hooks/useGameEffects';
 import { useAutoAction } from '../hooks/useAutoAction';
+import { useSimulatedTable } from '../hooks/useSimulatedTable';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🎰 POKER ROOM COMPONENT — LIVE MULTIPLAYER
@@ -53,7 +54,9 @@ export const PokerRoom: React.FC<PokerRoomProps> = ({
         leaveTable,
         sendAction,
         disconnect,
-    } = usePokerTable(tableId, userId);
+    } = tableId.startsWith('sim')
+            ? useSimulatedTable(tableId, userId)
+            : usePokerTable(tableId, userId);
 
     // Local UI state
     const [showChat, setShowChat] = useState(false);
