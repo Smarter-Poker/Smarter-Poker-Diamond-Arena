@@ -49,17 +49,19 @@ export const CashGamesLobby: React.FC<CashGamesLobbyProps> = ({
         stakes: 'ALL',
     });
 
+    // Demo tables fallback
+    const DEMO_TABLES: CashTable[] = [
+        { id: 'cash-1', name: 'Diamond Ring', variant: 'NLH', stakes: '10/20', tableSize: 6, playerCount: 4, minBuyIn: 200, maxBuyIn: 2000, avgPot: 450 },
+        { id: 'cash-2', name: 'High Roller', variant: 'NLH', stakes: '100/200', tableSize: 6, playerCount: 2, minBuyIn: 2000, maxBuyIn: 20000, avgPot: 4500 },
+        { id: 'cash-3', name: 'PLO Action', variant: 'PLO', stakes: '25/50', tableSize: 6, playerCount: 5, minBuyIn: 500, maxBuyIn: 5000, avgPot: 1200 },
+        { id: 'cash-4', name: 'PLO8 Split', variant: 'PLO8', stakes: '10/20', tableSize: 6, playerCount: 3, minBuyIn: 200, maxBuyIn: 2000, avgPot: 380 },
+    ];
+
     // Fetch tables from Supabase
     useEffect(() => {
         const fetchTables = async () => {
             if (!isSupabaseConfigured) {
-                // Demo tables for local mode
-                setTables([
-                    { id: 'cash-1', name: 'Diamond Ring', variant: 'NLH', stakes: '10/20', tableSize: 6, playerCount: 4, minBuyIn: 200, maxBuyIn: 2000, avgPot: 450 },
-                    { id: 'cash-2', name: 'High Roller', variant: 'NLH', stakes: '100/200', tableSize: 6, playerCount: 2, minBuyIn: 2000, maxBuyIn: 20000, avgPot: 4500 },
-                    { id: 'cash-3', name: 'PLO Action', variant: 'PLO', stakes: '25/50', tableSize: 6, playerCount: 5, minBuyIn: 500, maxBuyIn: 5000, avgPot: 1200 },
-                    { id: 'cash-4', name: 'PLO8 Split', variant: 'PLO8', stakes: '10/20', tableSize: 6, playerCount: 3, minBuyIn: 200, maxBuyIn: 2000, avgPot: 380 },
-                ]);
+                setTables(DEMO_TABLES);
                 setIsLoading(false);
                 return;
             }
@@ -73,21 +75,27 @@ export const CashGamesLobby: React.FC<CashGamesLobbyProps> = ({
 
                 if (error) throw error;
 
-                const mapped: CashTable[] = (data || []).map(t => ({
-                    id: t.id,
-                    name: t.name,
-                    variant: t.variant || 'NLH',
-                    stakes: `${t.small_blind}/${t.big_blind}`,
-                    tableSize: t.table_size,
-                    playerCount: t.player_count || 0,
-                    minBuyIn: t.min_buy_in,
-                    maxBuyIn: t.max_buy_in,
-                    avgPot: t.avg_pot || 0,
-                }));
-
-                setTables(mapped);
+                if (data && data.length > 0) {
+                    const mapped: CashTable[] = data.map(t => ({
+                        id: t.id,
+                        name: t.name,
+                        variant: t.variant || 'NLH',
+                        stakes: `${t.small_blind}/${t.big_blind}`,
+                        tableSize: t.table_size,
+                        playerCount: t.player_count || 0,
+                        minBuyIn: t.min_buy_in,
+                        maxBuyIn: t.max_buy_in,
+                        avgPot: t.avg_pot || 0,
+                    }));
+                    setTables(mapped);
+                } else {
+                    // Fallback to demo if no real tables
+                    setTables(DEMO_TABLES);
+                }
             } catch (err) {
                 console.error('[CashLobby] Failed to fetch tables:', err);
+                // Fallback to demo on error
+                setTables(DEMO_TABLES);
             } finally {
                 setIsLoading(false);
             }

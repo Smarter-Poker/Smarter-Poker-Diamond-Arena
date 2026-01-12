@@ -42,15 +42,15 @@ const FOUR_COLOR_SUITS: Record<Suit, string> = {
 interface PlayingCardProps {
     card?: Card | null;
     faceDown?: boolean;
-    size?: 'small' | 'medium' | 'large';
+    size?: 'xs' | 'small' | 'medium' | 'large';
     highlighted?: boolean;
-    folded?: boolean;
     folded?: boolean;
     delay?: number;
     fourColorDeck?: boolean;
 }
 
 const SIZES = {
+    xs: { width: 32, height: 45, fontSize: 10 },
     small: { width: 48, height: 68, fontSize: 14 },
     medium: { width: 64, height: 90, fontSize: 18 },
     large: { width: 80, height: 112, fontSize: 22 },
