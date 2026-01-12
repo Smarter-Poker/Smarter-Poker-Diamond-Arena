@@ -424,12 +424,129 @@ export class PokerTableEngine {
         return true;
     }
 
+    // ═══════════════════════════════════════════════════════════════════════
+    // 💰 POT MANAGEMENT & SIDE POTS
+    // ═══════════════════════════════════════════════════════════════════════
+
+    /**
+     * Deducts chips from player but DEFERS adding to pot structure until end of round.
+     * Updates 'currentBet' and 'totalBetThisHand'.
+     */
     private placeBet(player: Player, amount: number): void {
         const actualAmount = Math.min(amount, player.chipStack);
         player.chipStack -= actualAmount;
         player.currentBet += actualAmount;
         player.totalBetThisHand += actualAmount;
-        this.state.pots[0].amount += actualAmount;
+
+        // Note: We do NOT add to state.pots[] here directly for logical splitting.
+        // However, for VISUAL purposes (showing pot grow), we can treat pots[0] as the "active pile"
+        // But true reconciliation happens in collectBets().
+        // For simplicity in UI, we can accumulate loosely in pots[0] but clear/rebuild in collectBets.
+        if (this.state.pots.length > 0) {
+            // Find the latest open pot or just the last one
+            const lastPot = this.state.pots[this.state.pots.length - 1];
+            if (!lastPot.isClosed) {
+                lastPot.amount += actualAmount;
+            }
+        }
+    }
+
+    /**
+     * Consolidates all betting action from the current street into Main and Side Pots.
+     * Handles complex multi-way all-in scenarios.
+     */
+    private collectBets(): void {
+        const contributors = this.state.seats.filter(p => p && p.currentBet > 0) as Player[];
+        if (contributors.length === 0) return;
+
+        // 1. Remove the "visual" accumulation from placeBet to prevent double counting
+        // We will rebuild the pot structure for this round's bets.
+        let totalStreetBets = 0;
+        contributors.forEach(p => totalStreetBets += p.currentBet);
+
+        // Subtract this "loose" money from the display pot (usually pots[last]) to redistribute it properly
+        // This is a bit hacky but ensures we transition from "Simple Display" to "Strict Logic"
+        if (this.state.pots.length > 0) {
+            this.state.pots[this.state.pots.length - 1].amount -= totalStreetBets;
+            if (this.state.pots[this.state.pots.length - 1].amount < 0) {
+                // Should not happen if logic is tight
+                this.state.pots[this.state.pots.length - 1].amount = 0;
+            }
+        }
+
+        // 2. Sort contributors by bet amount (ascending) to identify "tiers"
+        contributors.sort((a, b) => a.currentBet - b.currentBet);
+
+        let previouslyProcessedBet = 0;
+
+        for (const player of contributors) {
+            const betForThisLevel = player.currentBet - previouslyProcessedBet;
+            if (betForThisLevel <= 0) continue;
+
+            // Find all players who bet *at least* this amount (including this player)
+            // Since they are sorted, it is this player and everyone after.
+            const participatingPlayers = contributors.filter(p => p.currentBet >= player.currentBet);
+
+            // Calculate how much money goes into the pot at this "level"
+            const potContribution = betForThisLevel * participatingPlayers.length;
+
+            // 3. Find or Create the Active Pot
+            // We look for the last pot. If it's closed (capped by a previous all-in), we make a new one.
+            let activePot = this.state.pots[this.state.pots.length - 1];
+
+            // If no pots exist or last one is closed, create new
+            if (!activePot || activePot.isClosed) {
+                activePot = {
+                    amount: 0,
+                    eligiblePlayers: participatingPlayers.map(p => p.id),
+                    isMainPot: this.state.pots.length === 0,
+                    isClosed: false
+                };
+                this.state.pots.push(activePot);
+            } else {
+                // If it's open, ensure current participants are eligible (should be intersected/unioned?)
+                // Actually, eligiblePlayers is usually set at creation.
+                // For Side Pots, we just add money here.
+            }
+
+            activePot.amount += potContribution;
+
+            // 4. Handle Capping (All-In)
+            // If this player is All-In, they cannot win any MORE money than this level.
+            // So we CLOSE this pot. Future bets (higher amounts) go to a NEW pot.
+            if (player.status === 'ALL_IN') {
+                activePot.isClosed = true;
+
+                // Ensure only eligible players are listed (strictly those who contributed to this level)
+                // Filter out anyone who folded? No, `contributors` only has active/all-in/folded players who bet.
+                // But `eligiblePlayers` tracks who can WIN.
+
+                // Important: Update eligiblePlayers to intersection of current eligible & participants?
+                // Or just trust the initialization logic?
+                // Let's ensure eligiblePlayers is correct for the closed pot.
+
+                // Next pot candidates: Everyone who bet MORE than this player
+                const remainingPlayers = participatingPlayers.filter(p => p.id !== player.id && p.currentBet > player.currentBet);
+
+                if (remainingPlayers.length > 0) {
+                    // Create the NEXT side pot immediately for the overflow
+                    this.state.pots.push({
+                        amount: 0,
+                        eligiblePlayers: remainingPlayers.map(p => p.id),
+                        isMainPot: false,
+                        isClosed: false
+                    });
+                }
+            }
+
+            previouslyProcessedBet = player.currentBet;
+        }
+
+        // 5. Reset current bets for next street
+        for (const player of this.state.seats) {
+            if (player) player.currentBet = 0;
+        }
+        this.state.currentBet = 0;
     }
 
     // ═══════════════════════════════════════════════════════════════════════
@@ -505,6 +622,9 @@ export class PokerTableEngine {
     // ═══════════════════════════════════════════════════════════════════════
 
     private advanceStreet(): void {
+        // 1. Process all bets into pots first
+        this.collectBets();
+
         // Check for early winner (all folded)
         const activePlayers = this.getActivePlayers();
         if (activePlayers.length === 1) {
@@ -554,7 +674,8 @@ export class PokerTableEngine {
             this.setNextToAct();
         } else {
             // Run out remaining cards automatically
-            this.advanceStreet();
+            // Add a small delay for visual purity
+            setTimeout(() => this.advanceStreet(), 1000);
         }
     }
 
@@ -587,42 +708,62 @@ export class PokerTableEngine {
         // Evaluate all hands
         const contenders: { id: string; player: Player; hand: EvaluatedHand }[] = [];
 
-        for (const player of this.getActivePlayers()) {
-            if (player.holeCards && player.holeCards.length === 2) {
+        for (const player of this.getSeatedPlayers()) {
+            // Include anyone who is NOT folded and who has cards
+            if (player.status !== 'FOLDED' && player.status !== 'SITTING_OUT' && player.status !== 'WAITING' && player.holeCards) {
                 const allCards = [...player.holeCards, ...this.state.communityCards];
                 const hand = evaluateHand(allCards);
                 contenders.push({ id: player.id, player, hand });
             }
         }
 
-        // Determine winners
-        const winnerData = determineWinners(contenders.map(c => ({ id: c.id, hand: c.hand })));
-        const winners = contenders.filter(c => winnerData.some(w => w.id === c.id));
+        const allWinners: any[] = [];
+        let totalDistributed = 0;
 
-        // Split pot among winners
-        const potAmount = this.state.pots[0].amount;
-        const winAmount = Math.floor(potAmount / winners.length);
-        const remainder = potAmount % winners.length;
+        // Iterate through all pots (Main + Side Pots)
+        this.state.pots.forEach((pot, potIndex) => {
+            if (pot.amount === 0) return;
 
-        winners.forEach((winner, index) => {
-            const prize = winAmount + (index === 0 ? remainder : 0);
-            winner.player.chipStack += prize;
+            // Filter contenders eligible for this specific pot
+            const potContenders = contenders.filter(c => pot.eligiblePlayers.includes(c.id));
 
-            this.logHistory('WINNER', winner.player.id, undefined, prize, undefined,
-                `${winner.player.username} wins ${prize} with ${winner.hand.description}`);
+            if (potContenders.length === 0) {
+                console.error(`Pot ${potIndex} has no eligible contenders.`);
+                return;
+            }
+
+            // Determine winner(s) just for this pot
+            const winnerData = determineWinners(potContenders.map(c => ({ id: c.id, hand: c.hand })));
+            const potWinners = potContenders.filter(c => winnerData.some(w => w.id === c.id));
+
+            if (potWinners.length === 0) return;
+
+            const winAmount = Math.floor(pot.amount / potWinners.length);
+            const remainder = pot.amount % potWinners.length;
+
+            potWinners.forEach((winner, index) => {
+                const prize = winAmount + (index === 0 ? remainder : 0);
+                winner.player.chipStack += prize;
+                totalDistributed += prize;
+
+                this.logHistory('WINNER', winner.player.id, undefined, prize, undefined,
+                    `${winner.player.username} wins ${prize} from ${pot.isMainPot ? 'Main Pot' : 'Side Pot #' + potIndex} with ${winner.hand.description}`);
+
+                allWinners.push({ ...winner, prize, potIndex, handDescription: winner.hand.description });
+            });
         });
 
-        this.emit('HAND_COMPLETE', { winners, pot: potAmount });
+        this.emit('HAND_COMPLETE', { winners: allWinners, pot: totalDistributed });
         this.endHand();
     }
 
     private awardPot(winner: Player): void {
-        const potAmount = this.state.pots[0].amount;
-        winner.chipStack += potAmount;
+        const totalAmount = this.state.pots.reduce((sum, pot) => sum + pot.amount, 0);
+        winner.chipStack += totalAmount;
 
-        this.logHistory('WINNER', winner.id, undefined, potAmount, undefined,
-            `${winner.username} wins ${potAmount} (others folded)`);
-        this.emit('HAND_COMPLETE', { winners: [winner], pot: potAmount });
+        this.logHistory('WINNER', winner.id, undefined, totalAmount, undefined,
+            `${winner.username} wins ${totalAmount} (others folded)`);
+        this.emit('HAND_COMPLETE', { winners: [winner], pot: totalAmount });
     }
 
     private endHand(): void {

@@ -19,6 +19,7 @@ import { LeaderboardPanel } from './LeaderboardPanel';
 import { QuickActionsHUD } from './QuickActionsHUD';
 import { PotOddsCalculator } from './PotOddsCalculator';
 import { useGameSettings } from '../hooks/useGameSettings';
+import { analyzeHandStrength } from '../engine/hand-strength';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🎰 POKER ROOM COMPONENT — LIVE MULTIPLAYER
@@ -794,11 +795,17 @@ export const PokerRoom: React.FC<PokerRoomProps> = ({
             />
 
             {/* Analytics: Pot Odds Calculator */}
+            {/* Analytics: Pot Odds Calculator */}
             {heroSeat !== undefined && isMyTurn && (
                 <PotOddsCalculator
                     potSize={totalPot}
-                    amountToCall={tableState.currentBet - (myChips < tableState.currentBet ? myChips : (tableState.seats[heroSeat - 1]?.bet || 0))} // Simplified logic
-                    estimatedEquity={33} // TODO: Hook up to HandEvaluator
+                    amountToCall={tableState.currentBet - ((tableState.seats[heroSeat - 1]?.bet || 0))}
+                    estimatedEquity={useMemo(() => {
+                        const hero = tableState.seats[heroSeat - 1];
+                        if (!hero?.holeCards) return 0;
+                        const analysis = analyzeHandStrength(hero.holeCards, tableState.communityCards);
+                        return analysis.equity;
+                    }, [tableState.seats[heroSeat - 1]?.holeCards, tableState.communityCards])}
                     isVisible={settings.showPotOdds}
                     position="BOTTOM"
                 />
