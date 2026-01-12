@@ -15,6 +15,7 @@ export { PokerTableEngine } from './engine/table-engine';
 export { analyzeHandStrength, analyzeDraws, estimateEquity, estimateHandVsRange } from './engine/hand-strength';
 export { soundEngine, playSound, initializeSound, setVolume, setSoundEnabled } from './engine/sound-engine';
 export { animationController, staggerDelay, getPreset, createDealSequence, createChipWinAnimation } from './engine/animation-controller';
+export { GameDealerService, createGameDealer } from './engine/game-dealer';
 
 // Services
 export { PokerRealtimeService, pokerService } from './services/poker-realtime';
