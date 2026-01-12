@@ -589,7 +589,7 @@ export const PokerTablePremium: React.FC<PokerTablePremiumProps> = ({
             })}
 
             {/* Card Layer (Renders cards with dealing animation) */}
-            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 40 }}>
+            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 60 }}>
                 <AnimatePresence>
                     {state.seats.map((player, index) => {
                         if (!player || !player.holeCards || player.holeCards.length === 0) return null;
