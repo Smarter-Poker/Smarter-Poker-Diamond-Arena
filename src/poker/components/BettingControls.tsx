@@ -34,6 +34,7 @@ interface BettingControlsProps {
     minBet: number;            // Big blind
     minRaise: number;          // Minimum raise size
     potSize: number;
+    maxBetAmount?: number;     // Max bet (for pot-limit games)
     onAction: (action: ActionType, amount?: number) => void;
     disabled?: boolean;
     preAction?: 'CHECK_FOLD' | 'CALL_ANY' | null;
@@ -48,6 +49,7 @@ export const BettingControls: React.FC<BettingControlsProps> = ({
     minBet,
     minRaise,
     potSize,
+    maxBetAmount,
     onAction,
     disabled = false,
     preAction = null,
@@ -63,7 +65,8 @@ export const BettingControls: React.FC<BettingControlsProps> = ({
     const canRaise = currentBet > 0 && chipStack > toCall;
 
     const minRaiseTotal = currentBet + minRaise;
-    const maxBet = chipStack + myCurrentBet;
+    // If maxBetAmount is provided (pot-limit), use it; otherwise use stack (no-limit)
+    const maxBet = maxBetAmount ?? (chipStack + myCurrentBet);
 
     // Reset bet amount when turn changes
     useEffect(() => {

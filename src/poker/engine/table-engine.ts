@@ -295,6 +295,34 @@ export class PokerTableEngine {
     // 🎯 PLAYER ACTIONS
     // ═══════════════════════════════════════════════════════════════════════
 
+    /**
+     * 💰 Calculate Pot-Limit Maximum Bet
+     * Formula: Pot + Call Amount + Call Amount (the pot after you call)
+     * This is the maximum you can bet/raise in Pot-Limit games.
+     */
+    private calculatePotLimitMax(seatNumber: number): number {
+        const player = this.state.seats[seatNumber - 1];
+        if (!player) return 0;
+
+        // Current pot total
+        const currentPot = this.state.pots.reduce((sum, pot) => sum + pot.amount, 0);
+
+        // All bets currently on the table (not yet collected into pots)
+        const tableBets = this.state.seats.reduce((sum, p) => sum + (p?.currentBet || 0), 0);
+
+        // The total "pot" for pot-limit calculation
+        const effectivePot = currentPot + tableBets;
+
+        // Amount the player needs to call
+        const toCall = this.state.currentBet - player.currentBet;
+
+        // Pot-Limit Max = Pot + toCall + toCall (pot after calling)
+        // This equals: effectivePot + 2 * toCall
+        const potLimitMax = effectivePot + (2 * toCall);
+
+        return potLimitMax;
+    }
+
     getValidActions(seatNumber: number): { action: ActionType; minAmount?: number; maxAmount?: number }[] {
         const player = this.state.seats[seatNumber - 1];
         if (!player || !player.isTurn || player.status !== 'ACTIVE') {
@@ -303,6 +331,7 @@ export class PokerTableEngine {
 
         const actions: { action: ActionType; minAmount?: number; maxAmount?: number }[] = [];
         const toCall = this.state.currentBet - player.currentBet;
+        const isPotLimit = this.state.config.bettingStructure === 'POT_LIMIT';
 
         // Can always fold (unless nothing to call)
         if (toCall > 0) {
@@ -319,23 +348,39 @@ export class PokerTableEngine {
             actions.push({ action: 'CALL', minAmount: toCall, maxAmount: toCall });
         }
 
+        // Calculate max bet based on betting structure
+        const potLimitMax = isPotLimit ? this.calculatePotLimitMax(seatNumber) : Infinity;
+        const effectiveMax = Math.min(player.chipStack, potLimitMax);
+
         // Bet (if no current bet)
         if (this.state.currentBet === 0) {
-            actions.push({
-                action: 'BET',
-                minAmount: this.state.config.bigBlind,
-                maxAmount: player.chipStack,
-            });
+            const maxBet = isPotLimit
+                ? Math.min(player.chipStack, this.calculatePotLimitMax(seatNumber))
+                : player.chipStack;
+
+            if (maxBet >= this.state.config.bigBlind) {
+                actions.push({
+                    action: 'BET',
+                    minAmount: this.state.config.bigBlind,
+                    maxAmount: maxBet,
+                });
+            }
         }
 
         // Raise (if there's a bet)
         if (this.state.currentBet > 0 && player.chipStack > toCall) {
             const minRaise = this.state.currentBet + this.state.minRaise;
-            actions.push({
-                action: 'RAISE',
-                minAmount: minRaise,
-                maxAmount: player.chipStack + player.currentBet,
-            });
+            const maxRaise = isPotLimit
+                ? Math.min(player.chipStack + player.currentBet, this.calculatePotLimitMax(seatNumber))
+                : player.chipStack + player.currentBet;
+
+            if (maxRaise >= minRaise) {
+                actions.push({
+                    action: 'RAISE',
+                    minAmount: minRaise,
+                    maxAmount: maxRaise,
+                });
+            }
         }
 
         // All-in (always available if has chips)
