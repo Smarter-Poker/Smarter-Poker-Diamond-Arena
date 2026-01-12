@@ -42,3 +42,9 @@ export { QuickActionsHUD } from './components/QuickActionsHUD';
 export { PotOddsCalculator, calculatePotOdds, calculateImpliedOdds } from './components/PotOddsCalculator';
 export { TournamentInfoPanel } from './components/TournamentInfoPanel';
 
+// Premium PokerBros-Style Components
+export { PokerTablePremium } from './components/PokerTablePremium';
+export { PokerRoomPremium } from './components/PokerRoomPremium';
+export { ActionControls } from './components/ActionControls';
+export { TableMenu, MenuButton } from './components/TableMenu';
+

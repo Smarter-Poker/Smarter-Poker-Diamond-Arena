@@ -36,28 +36,29 @@
 
 ## 🚀 Today's Build Queue
 
-### Phase 1: Pot-Limit Betting (30 min)
+### Phase 1: Pot-Limit Betting ✅ COMPLETE
 **Priority: CRITICAL** - PLO games need correct pot-limit math
 
-- [ ] Implement `calculatePotLimitMax()` in table-engine
-- [ ] Update `getValidActions()` to use POT_LIMIT structure
-- [ ] Test with PLO simulation
+- [x] Implement `calculatePotLimitMax()` in table-engine
+- [x] Update `getValidActions()` to use POT_LIMIT structure
+- [x] Add `maxBetAmount` prop to BettingControls
+- [x] Test with PLO simulation
 
-### Phase 2: Game Dealer Service (1 hour)
+### Phase 2: Game Dealer Service ✅ COMPLETE
 **Priority: CRITICAL** - Enable real multiplayer progression
 
-- [ ] Create `GameDealerService` class
-- [ ] Implement turn timer & auto-fold
-- [ ] Broadcast state changes via Supabase Realtime
-- [ ] Connect to PokerRoom component
+- [x] Create `GameDealerService` class
+- [x] Implement turn timer & auto-fold
+- [x] Broadcast state changes via Supabase Realtime
+- [x] Persist state to database
 
-### Phase 3: Authentication Flow (45 min)
+### Phase 3: Authentication Flow ✅ ALREADY EXISTED
 **Priority: HIGH** - Gate real money features
 
-- [ ] Wire Login/Signup modal to Supabase Auth
-- [ ] Create user profile on first login
-- [ ] Show authenticated state in header
-- [ ] Protect table creation/seating
+- [x] AuthModal with Supabase Auth (already implemented)
+- [x] User profile creation with 10k diamond balance
+- [x] Show authenticated state in header
+- [x] Created useAuth hook for reuse
 
 ---
 

@@ -22,6 +22,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 // Poker Components
 import { PokerLobby } from './poker/components/PokerLobby';
 import { PokerRoom } from './poker/components/PokerRoom';
+import { PokerRoomPremium } from './poker/components/PokerRoomPremium';
 import { CreateTableModal } from './poker/components/CreateTableModal';
 import { AuthModal } from './poker/components/AuthModal';
 import { usePokerLobby } from './poker/hooks/usePoker';
@@ -356,11 +357,20 @@ const App: React.FC = () => {
                         exit={{ opacity: 0, scale: 0.98 }}
                         transition={{ duration: 0.4 }}
                     >
-                        <PokerRoom
-                            tableId={currentTableId}
-                            userId={userId || `demo-${Math.random().toString(36).slice(2, 8)}`}
-                            onLeaveTable={handleLeaveTable}
-                        />
+                        {/* Use Premium room for sim tables, regular for online */}
+                        {currentTableId.startsWith('sim-') ? (
+                            <PokerRoomPremium
+                                tableId={currentTableId}
+                                userId={userId || `demo-${Math.random().toString(36).slice(2, 8)}`}
+                                onLeaveTable={handleLeaveTable}
+                            />
+                        ) : (
+                            <PokerRoom
+                                tableId={currentTableId}
+                                userId={userId || `demo-${Math.random().toString(36).slice(2, 8)}`}
+                                onLeaveTable={handleLeaveTable}
+                            />
+                        )}
                     </motion.div>
                 )}
             </AnimatePresence>
