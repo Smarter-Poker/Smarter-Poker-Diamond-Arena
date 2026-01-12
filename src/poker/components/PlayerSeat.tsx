@@ -34,7 +34,9 @@ interface PlayerSeatProps {
     isHero?: boolean;
     showCards?: boolean;
     timeRemaining?: number;
+    timeRemaining?: number;
     maxTime?: number;
+    fourColorDeck?: boolean;
 }
 
 export const PlayerSeat: React.FC<PlayerSeatProps> = ({
@@ -44,6 +46,7 @@ export const PlayerSeat: React.FC<PlayerSeatProps> = ({
     showCards = false,
     timeRemaining,
     maxTime = 30,
+    fourColorDeck = false,
 }) => {
     if (!player) {
         // Empty seat
@@ -125,6 +128,7 @@ export const PlayerSeat: React.FC<PlayerSeatProps> = ({
                             cards={player.holeCards}
                             size="small"
                             overlap={0.5}
+                            fourColorDeck={fourColorDeck}
                         />
                     </motion.div>
                 )}

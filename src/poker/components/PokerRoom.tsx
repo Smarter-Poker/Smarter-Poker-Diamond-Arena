@@ -435,6 +435,7 @@ export const PokerRoom: React.FC<PokerRoomProps> = ({
                         heroId={userId}
                         width={900}
                         height={550}
+                        fourColorDeck={settings.fourColorDeck}
                     />
                 </div>
 

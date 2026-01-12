@@ -27,6 +27,14 @@ const SUIT_COLORS: Record<Suit, string> = {
     spades: '#1A1A2E',
 };
 
+// Four Color Deck Mode
+const FOUR_COLOR_SUITS: Record<Suit, string> = {
+    hearts: '#FF4444',   // Red
+    diamonds: '#2D8CFF', // Blue
+    clubs: '#2ECC71',    // Green
+    spades: '#1A1A2E',   // Black
+};
+
 // ═══════════════════════════════════════════════════════════════════════════
 // 🃏 CARD COMPONENT
 // ═══════════════════════════════════════════════════════════════════════════
@@ -37,7 +45,9 @@ interface PlayingCardProps {
     size?: 'small' | 'medium' | 'large';
     highlighted?: boolean;
     folded?: boolean;
+    folded?: boolean;
     delay?: number;
+    fourColorDeck?: boolean;
 }
 
 const SIZES = {
@@ -53,9 +63,11 @@ export const PlayingCard: React.FC<PlayingCardProps> = ({
     highlighted = false,
     folded = false,
     delay = 0,
+    fourColorDeck = false,
 }) => {
     const dimensions = SIZES[size];
     const showBack = faceDown || !card;
+    const colors = fourColorDeck ? FOUR_COLOR_SUITS : SUIT_COLORS;
 
     return (
         <motion.div
@@ -116,7 +128,7 @@ export const PlayingCard: React.FC<PlayingCardProps> = ({
                             lineHeight: 1,
                         }}>
                             <span style={{
-                                color: SUIT_COLORS[card.suit],
+                                color: colors[card.suit],
                                 fontSize: dimensions.fontSize,
                                 fontWeight: 700,
                                 fontFamily: "'Georgia', serif",
@@ -124,7 +136,7 @@ export const PlayingCard: React.FC<PlayingCardProps> = ({
                                 {card.rank}
                             </span>
                             <span style={{
-                                color: SUIT_COLORS[card.suit],
+                                color: colors[card.suit],
                                 fontSize: dimensions.fontSize * 0.8,
                             }}>
                                 {SUIT_SYMBOLS[card.suit]}
@@ -133,7 +145,7 @@ export const PlayingCard: React.FC<PlayingCardProps> = ({
 
                         {/* Center Suit */}
                         <span style={{
-                            color: SUIT_COLORS[card.suit],
+                            color: colors[card.suit],
                             fontSize: dimensions.fontSize * 1.8,
                         }}>
                             {SUIT_SYMBOLS[card.suit]}
@@ -149,7 +161,7 @@ export const PlayingCard: React.FC<PlayingCardProps> = ({
                             transform: 'rotate(180deg)',
                         }}>
                             <span style={{
-                                color: SUIT_COLORS[card.suit],
+                                color: colors[card.suit],
                                 fontSize: dimensions.fontSize,
                                 fontWeight: 700,
                                 fontFamily: "'Georgia', serif",
@@ -157,7 +169,7 @@ export const PlayingCard: React.FC<PlayingCardProps> = ({
                                 {card.rank}
                             </span>
                             <span style={{
-                                color: SUIT_COLORS[card.suit],
+                                color: colors[card.suit],
                                 fontSize: dimensions.fontSize * 0.8,
                             }}>
                                 {SUIT_SYMBOLS[card.suit]}
@@ -227,6 +239,7 @@ interface CardGroupProps {
     size?: 'small' | 'medium' | 'large';
     overlap?: number;
     highlighted?: number[];
+    fourColorDeck?: boolean;
 }
 
 export const CardGroup: React.FC<CardGroupProps> = ({
@@ -235,6 +248,7 @@ export const CardGroup: React.FC<CardGroupProps> = ({
     size = 'medium',
     overlap = 0.4,
     highlighted = [],
+    fourColorDeck = false,
 }) => {
     const dimensions = SIZES[size];
     const cardOffset = dimensions.width * (1 - overlap);
@@ -261,6 +275,7 @@ export const CardGroup: React.FC<CardGroupProps> = ({
                         size={size}
                         highlighted={highlighted.includes(index)}
                         delay={index * 0.1}
+                        fourColorDeck={fourColorDeck}
                     />
                 </div>
             ))}

@@ -51,6 +51,7 @@ interface PokerTableProps {
     onSeatClick?: (seatNumber: number) => void;
     width?: number;
     height?: number;
+    fourColorDeck?: boolean;
 }
 
 export const PokerTable: React.FC<PokerTableProps> = ({
@@ -59,6 +60,7 @@ export const PokerTable: React.FC<PokerTableProps> = ({
     onSeatClick,
     width = 900,
     height = 600,
+    fourColorDeck = false,
 }) => {
     const seatPositions = state.config.tableSize === 9
         ? SEAT_POSITIONS_9
@@ -183,7 +185,12 @@ export const PokerTable: React.FC<PokerTableProps> = ({
                                 transition={{ delay: index * 0.15 }}
                             >
                                 {card ? (
-                                    <PlayingCard card={card} size="medium" delay={index * 0.1} />
+                                    <PlayingCard
+                                        card={card}
+                                        size="medium"
+                                        delay={index * 0.1}
+                                        fourColorDeck={fourColorDeck}
+                                    />
                                 ) : (
                                     <div
                                         style={{
