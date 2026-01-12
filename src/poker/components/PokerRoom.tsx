@@ -281,7 +281,7 @@ export const PokerRoom: React.FC<PokerRoomProps> = ({
                         {tableState.config.name}
                     </span>
                     <span style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13 }}>
-                        💎 {tableState.config.smallBlind}/{tableState.config.bigBlind} NL Hold'em
+                        💎 {tableState.config.smallBlind}/{tableState.config.bigBlind} {tableState.config.variant || 'NLH'}
                     </span>
 
                     {/* Connection Status */}
