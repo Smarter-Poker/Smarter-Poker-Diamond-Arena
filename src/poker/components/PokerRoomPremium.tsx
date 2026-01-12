@@ -34,6 +34,7 @@ export const PokerRoomPremium: React.FC<PokerRoomPremiumProps> = ({
     const [soundEnabled, setSoundEnabled] = useState(true);
     const [fourColorDeck, setFourColorDeck] = useState(false);
     const [timerProgress, setTimerProgress] = useState(100);
+    const [, forceUpdate] = useState(0);
 
     // Use simulated table for offline mode
     const isSimulated = tableId.startsWith('sim-');
@@ -50,6 +51,14 @@ export const PokerRoomPremium: React.FC<PokerRoomPremiumProps> = ({
         sendAction,
         engine,
     } = table;
+
+    // For simulated tables, track updateTrigger to force re-renders
+    const updateTrigger = 'updateTrigger' in table ? (table as any).updateTrigger : 0;
+
+    // Force re-render when updateTrigger changes
+    useEffect(() => {
+        forceUpdate(prev => prev + 1);
+    }, [updateTrigger]);
 
     // Get current state from engine (simulated) or reconstruct (realtime)
     const state = engine?.getState() || null;

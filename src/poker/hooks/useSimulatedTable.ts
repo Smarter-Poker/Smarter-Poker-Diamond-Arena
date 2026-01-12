@@ -197,6 +197,7 @@ export function useSimulatedTable(tableId: string, userId: string, initialConfig
         heroSeat: heroPlayer?.seat_number ?? null,
         isMyTurn: heroPlayer?.is_turn ?? false,
         myChips: heroPlayer?.chip_stack ?? 0,
+        updateTrigger: stats.updateTrigger, // For component re-render tracking
 
         seatPlayer: async (seat, amt) => {
             if (!engineRef.current) return false;
