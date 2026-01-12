@@ -12,6 +12,13 @@ import type { TableState, TableConfig, ActionType, Card } from '../types/poker';
 import { usePokerTable, dbRowToPlayer, dbRowToTableConfig } from '../hooks/usePoker';
 import { PokerTable } from './PokerTable';
 import { BettingControls } from './BettingControls';
+import { HandHistoryPanel } from './HandHistoryPanel';
+import { ChatPanel } from './ChatPanel';
+import { TableSettingsPanel } from './TableSettingsPanel';
+import { LeaderboardPanel } from './LeaderboardPanel';
+import { QuickActionsHUD } from './QuickActionsHUD';
+import { PotOddsCalculator } from './PotOddsCalculator';
+import { useGameSettings } from '../hooks/useGameSettings';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🎰 POKER ROOM COMPONENT — LIVE MULTIPLAYER
@@ -47,10 +54,16 @@ export const PokerRoom: React.FC<PokerRoomProps> = ({
 
     // Local UI state
     const [showChat, setShowChat] = useState(false);
+    const [showHistory, setShowHistory] = useState(false);
+    const [showSettings, setShowSettings] = useState(false);
+    const [showLeaderboard, setShowLeaderboard] = useState(false);
     const [showSeatPicker, setShowSeatPicker] = useState(false);
     const [buyInAmount, setBuyInAmount] = useState(1000);
     const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
-    const [messages] = useState<{ user: string; text: string; time: Date }[]>([]);
+    const [messages, setMessages] = useState<{ id: string; userId: string; username: string; message: string; timestamp: Date; type: 'CHAT' | 'SYSTEM' | 'EMOTE' | 'ACTION' }[]>([]);
+
+    // Load settings
+    const { settings, saveSettings } = useGameSettings();
     const [actionError, setActionError] = useState<string | null>(null);
 
     // Build TableState from live data
@@ -105,6 +118,20 @@ export const PokerRoom: React.FC<PokerRoomProps> = ({
             setActionError('Failed to take seat');
         }
     }, [selectedSeat, buyInAmount, seatPlayer]);
+
+    // Handle chat
+    const handleSendMessage = useCallback((text: string) => {
+        // In a real app, this would send to Supabase
+        const newMessage = {
+            id: Date.now().toString(),
+            userId: userId,
+            username: 'Hero', // Should come from profile
+            message: text,
+            timestamp: new Date(),
+            type: text.startsWith('/me') ? 'ACTION' as const : 'CHAT' as const,
+        };
+        setMessages(prev => [...prev, newMessage]);
+    }, [userId]);
 
     // Handle leaving
     const handleLeave = useCallback(async () => {
@@ -680,6 +707,102 @@ export const PokerRoom: React.FC<PokerRoomProps> = ({
                     </motion.div>
                 )}
             </AnimatePresence>
+
+            {/* Quick Actions HUD */}
+            <QuickActionsHUD
+                onOpenChat={() => setShowChat(!showChat)}
+                onOpenHistory={() => setShowHistory(true)}
+                onOpenSettings={() => setShowSettings(true)}
+                onOpenLeaderboard={() => setShowLeaderboard(true)}
+                onRebuy={() => console.log('Rebuy functionality to be implemented')}
+                onSitOut={() => console.log('Sit Out functionality to be implemented')}
+                onLeaveTable={onLeaveTable}
+                isSittingOut={false}
+                canRebuy={myChips < tableState.config.maxBuyIn}
+                isSeated={heroSeat !== undefined}
+                connectionStatus={isConnected ? 'CONNECTED' : 'DISCONNECTED'}
+            />
+
+            {/* Chat Panel (Left Side Overlay) */}
+            <AnimatePresence>
+                {showChat && (
+                    <motion.div
+                        initial={{ x: -300, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={{ x: -300, opacity: 0 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        style={{
+                            position: 'absolute',
+                            top: 60,
+                            bottom: 20,
+                            left: 20,
+                            zIndex: 40,
+                        }}
+                    >
+                        <ChatPanel
+                            messages={messages}
+                            currentUserId={userId}
+                            onSendMessage={handleSendMessage}
+                            onToggleCollapse={() => setShowChat(false)}
+                        />
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
+            {/* Hand History Panel */}
+            <HandHistoryPanel
+                hands={[
+                    // Mock data for initial display
+                    {
+                        handId: 'h1',
+                        timestamp: new Date(),
+                        holeCards: [{ rank: 'A', suit: 'SPADES' }, { rank: 'K', suit: 'SPADES' }],
+                        communityCards: [{ rank: 'Q', suit: 'SPADES' }, { rank: 'J', suit: 'SPADES' }, { rank: '10', suit: 'SPADES' }, { rank: '2', suit: 'HEARTS' }, { rank: '3', suit: 'CLUBS' }],
+                        netProfit: 500,
+                        winnerId: userId,
+                        isWinner: true,
+                        actionSummary: 'Royal Flush! Won 500 diamonds.',
+                        finalHandRank: 'Royal Flush'
+                    }
+                ]}
+                heroId={userId}
+                isOpen={showHistory}
+                onClose={() => setShowHistory(false)}
+            />
+
+            {/* Table Settings Panel */}
+            <TableSettingsPanel
+                isOpen={showSettings}
+                onClose={() => setShowSettings(false)}
+                onSave={(newSettings) => {
+                    saveSettings(newSettings);
+                    setShowSettings(false);
+                }}
+            />
+
+            {/* Leaderboard Panel */}
+            <LeaderboardPanel
+                entries={[
+                    { rank: 1, userId: 'u1', username: 'PokerPro', value: 50000, trend: 'UP', isOnline: true },
+                    { rank: 2, userId: 'u2', username: 'ChipLeader', value: 45000, trend: 'DOWN', isOnline: true },
+                    { rank: 3, userId: userId, username: 'Hero', value: 30000, trend: 'SAME', isOnline: true },
+                    { rank: 4, userId: 'u3', username: 'Shark', value: 25000, trend: 'UP', isOnline: false },
+                ]}
+                currentUserId={userId}
+                isOpen={showLeaderboard}
+                onClose={() => setShowLeaderboard(false)}
+            />
+
+            {/* Analytics: Pot Odds Calculator */}
+            {heroSeat !== undefined && isMyTurn && (
+                <PotOddsCalculator
+                    potSize={totalPot}
+                    amountToCall={tableState.currentBet - (myChips < tableState.currentBet ? myChips : (tableState.seats[heroSeat - 1]?.bet || 0))} // Simplified logic
+                    estimatedEquity={33} // TODO: Hook up to HandEvaluator
+                    isVisible={settings.showPotOdds}
+                    position="BOTTOM"
+                />
+            )}
         </div>
     );
 };

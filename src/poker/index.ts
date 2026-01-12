@@ -12,12 +12,16 @@ export * from './types/poker';
 export { Deck, cardToString, stringToCard, formatCard, rankValue, suitSymbol, suitColor } from './engine/deck';
 export { evaluateHand, compareHands, determineWinners } from './engine/hand-evaluator';
 export { PokerTableEngine } from './engine/table-engine';
+export { analyzeHandStrength, analyzeDraws, estimateEquity, estimateHandVsRange } from './engine/hand-strength';
+export { soundEngine, playSound, initializeSound, setVolume, setSoundEnabled } from './engine/sound-engine';
+export { animationController, staggerDelay, getPreset, createDealSequence, createChipWinAnimation } from './engine/animation-controller';
 
 // Services
 export { PokerRealtimeService, pokerService } from './services/poker-realtime';
 
 // Hooks
 export { usePokerLobby, usePokerTable, dbRowToPlayer, dbRowToTableConfig } from './hooks/usePoker';
+export { useGameSettings } from './hooks/useGameSettings';
 
 // Components
 export { PlayingCard, CardGroup } from './components/PlayingCard';
