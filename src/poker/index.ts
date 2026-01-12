@@ -48,3 +48,20 @@ export { PokerRoomPremium } from './components/PokerRoomPremium';
 export { ActionControls } from './components/ActionControls';
 export { TableMenu, MenuButton } from './components/TableMenu';
 
+// Lobby Components
+export { LobbyTabs } from './components/lobby/LobbyTabs';
+export { CashGamesLobby } from './components/lobby/CashGamesLobby';
+export { TournamentsLobby } from './components/lobby/TournamentsLobby';
+export { PokerLobbyPremium } from './components/PokerLobbyPremium';
+
+// Tournament Components
+export { TournamentDetailsPage } from './components/tournament/TournamentDetailsPage';
+
+// Cash Game Components
+export { CashBuyInModal } from './components/cash/CashBuyInModal';
+
+// Hand Replay Components
+export { HandReplayPage, generateShareLink, parseShareLink } from './components/replay/HandReplayPage';
+
+// Authentication
+export { HubAuthProvider, useHubAuth } from './components/auth/HubAuthProvider';
