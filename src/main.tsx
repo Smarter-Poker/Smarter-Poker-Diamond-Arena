@@ -18,12 +18,15 @@ import { PokerRoomPremium } from './poker/components/PokerRoomPremium';
 import { PokerLobbyPremium } from './poker/components/PokerLobbyPremium';
 import { TournamentDetailsPage } from './poker/components/tournament/TournamentDetailsPage';
 import { CashBuyInModal } from './poker/components/cash/CashBuyInModal';
-import { HandReplayPage } from './poker/components/replay/HandReplayPage';
+import { HandReplayPage, type HandReplayData } from './poker/components/replay/HandReplayPage';
 import { AuthModal } from './poker/components/AuthModal';
-import type { PokerVariant, Card } from './poker/types/poker';
+import type { PokerVariant, Card, TournamentDetails } from './poker/types/poker';
 
 // Utilities
 import { supabase, isSupabaseConfigured, getConnectionInfo } from './lib/supabase';
+import { tournamentService } from './poker/services/TournamentService';
+import { handHistoryService } from './poker/services/HandHistoryService';
+import { pokerService } from './poker/services/poker-realtime'; // Ensure this is available if needed
 
 // Styles
 import './styles/arena-globals.css';
@@ -216,15 +219,32 @@ interface HandHistoryEntry {
 const HandHistoryView: React.FC<{
     onBack: () => void;
     onViewHand: (handId: string) => void;
-}> = ({ onBack, onViewHand }) => {
-    // Demo hand history
-    const [hands] = useState<HandHistoryEntry[]>([
-        { id: 'hand-1', handNumber: 1, timestamp: new Date(Date.now() - 60000), tableName: 'Diamond Ring', variant: 'NLH', result: 450, mainPot: 900 },
-        { id: 'hand-2', handNumber: 2, timestamp: new Date(Date.now() - 120000), tableName: 'Diamond Ring', variant: 'NLH', result: -200, mainPot: 400 },
-        { id: 'hand-3', handNumber: 3, timestamp: new Date(Date.now() - 180000), tableName: 'PLO Action', variant: 'PLO', result: 1200, mainPot: 2400 },
-        { id: 'hand-4', handNumber: 4, timestamp: new Date(Date.now() - 240000), tableName: 'Low Stakes', variant: 'NLH', result: 0, mainPot: 60 },
-        { id: 'hand-5', handNumber: 5, timestamp: new Date(Date.now() - 300000), tableName: 'PLO Action', variant: 'PLO', result: -500, mainPot: 1000 },
-    ]);
+    userId?: string | null;
+}> = ({ onBack, onViewHand, userId }) => {
+    const [hands, setHands] = useState<HandHistoryEntry[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchHistory = async () => {
+            try {
+                const data = await handHistoryService.fetchRecentHands(userId || 'demo');
+                setHands(data.map((h, i) => ({
+                    id: h.id,
+                    handNumber: i + 1, // Service doesn't return hand num in summary yet
+                    timestamp: h.timestamp,
+                    tableName: h.summary.split(' - ')[1] || 'Unknown Table',
+                    variant: (h.summary.split(' - ')[0] as PokerVariant) || 'NLH',
+                    result: h.winAmount,
+                    mainPot: 0 // Service summary doesn't include pot yet
+                })));
+            } catch (err) {
+                console.error("Failed to fetch history", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchHistory();
+    }, [userId]);
 
     return (
         <div style={{ minHeight: '100vh', background: '#0A1628', color: '#FFF' }}>
@@ -254,35 +274,39 @@ const HandHistoryView: React.FC<{
 
             {/* Hand List */}
             <div style={{ padding: 20 }}>
-                {hands.map(hand => (
-                    <motion.div
-                        key={hand.id}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => onViewHand(hand.id)}
-                        style={{
-                            padding: 16,
-                            marginBottom: 12,
-                            background: 'rgba(0,0,0,0.3)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            borderRadius: 12,
-                            cursor: 'pointer',
-                        }}
-                    >
-                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
-                            <span style={{ fontWeight: 600 }}>{hand.tableName}</span>
-                            <span style={{
-                                color: hand.result > 0 ? '#00FF88' : hand.result < 0 ? '#FF4444' : 'rgba(255,255,255,0.5)',
-                                fontWeight: 600,
-                            }}>
-                                {hand.result > 0 ? '+' : ''}{hand.result} 💎
-                            </span>
-                        </div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>
-                            <span>Hand #{hand.handNumber} • {hand.variant}</span>
-                            <span>Pot: {hand.mainPot}</span>
-                        </div>
-                    </motion.div>
-                ))}
+                {isLoading ? (
+                    <div style={{ padding: 20, textAlign: 'center', color: '#666' }}>Loading history...</div>
+                ) : (
+                    hands.map(hand => (
+                        <motion.div
+                            key={hand.id}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={() => onViewHand(hand.id)}
+                            style={{
+                                padding: 16,
+                                marginBottom: 12,
+                                background: 'rgba(0,0,0,0.3)',
+                                border: '1px solid rgba(255,255,255,0.1)',
+                                borderRadius: 12,
+                                cursor: 'pointer',
+                            }}
+                        >
+                            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 8 }}>
+                                <span style={{ fontWeight: 600 }}>{hand.tableName}</span>
+                                <span style={{
+                                    color: hand.result > 0 ? '#00FF88' : hand.result < 0 ? '#FF4444' : 'rgba(255,255,255,0.5)',
+                                    fontWeight: 600,
+                                }}>
+                                    {hand.result > 0 ? '+' : ''}{hand.result} 💎
+                                </span>
+                            </div>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>
+                                <span>Hand #{hand.handNumber} • {hand.variant}</span>
+                                <span>{hand.timestamp.toLocaleDateString()}</span>
+                            </div>
+                        </motion.div>
+                    ))
+                )}
             </div>
         </div>
     );
@@ -295,8 +319,10 @@ const HandHistoryView: React.FC<{
 const App: React.FC = () => {
     const [view, setView] = useState<AppView>('loading');
     const [currentTableId, setCurrentTableId] = useState<string | null>(null);
-    const [currentTournament, setCurrentTournament] = useState<TournamentData | null>(null);
+    const [currentTournament, setCurrentTournament] = useState<TournamentDetails | null>(null);
     const [currentHandReplayId, setCurrentHandReplayId] = useState<string | null>(null);
+    const [currentHandReplayData, setCurrentHandReplayData] = useState<HandReplayData | null>(null);
+    const [loadingReplay, setLoadingReplay] = useState(false);
     const [showAuthModal, setShowAuthModal] = useState(false);
     const [showBuyInModal, setShowBuyInModal] = useState(false);
     const [pendingCashTable, setPendingCashTable] = useState<CashTableData | null>(null);
@@ -402,54 +428,27 @@ const App: React.FC = () => {
     // 🏆 TOURNAMENT FLOW
     // ═══════════════════════════════════════════════════════════════════════
 
-    const handleViewTournament = useCallback((tournamentId: string) => {
-        // Demo tournament data
-        const demoTournament: TournamentData = {
-            id: tournamentId,
-            name: '15K GTD✨WEEKNIGHT✨',
-            description: '15K GTD NLH WEEKNIGHT / 65 BUY-IN / REBUY / NO ADD-ON',
-            variant: 'NLH',
-            tableSize: 9,
-            buyIn: 58.50,
-            fee: 6.50,
-            prizePool: 15000,
-            guaranteedPool: 15000,
-            startTime: new Date(Date.now() + 4 * 60 * 60 * 1000),
-            status: 'REGISTERING',
-            entryCount: 13,
-            entriesRange: '5-7K',
-            maxEntries: 500,
-            blindsUp: 10,
-            lateRegLevel: 15,
-            currentLevel: 0,
-            remainingPlayers: 13,
-            avgStack: 48000,
-            startingChips: 40000,
-            isReentry: true,
-            reentryLimit: null,
-            hasAddon: false,
-            hasBigBlindAnte: false,
-            blindStructure: 'Standard',
-            earlyBirdBonus: 'LVL 2/+20% chip',
-        };
-
-        setCurrentTournament(demoTournament);
-        setView('tournament-details');
+    const handleViewTournament = useCallback(async (tournamentId: string) => {
+        const details = await tournamentService.getTournamentDetails(tournamentId);
+        if (details) {
+            setCurrentTournament(details);
+            setView('tournament-details');
+        }
     }, []);
 
-    const handleTournamentRegister = useCallback(() => {
-        if (currentTournament) {
-            // Check balance
-            const totalBuyIn = currentTournament.buyIn + currentTournament.fee;
-            if (userBalance >= totalBuyIn) {
-                setUserBalance(prev => prev - totalBuyIn);
+    const handleTournamentRegister = useCallback(async () => {
+        if (currentTournament && userId) {
+            const { success, error } = await tournamentService.register(currentTournament.id, userId);
+            if (success) {
+                setUserBalance(prev => prev - (currentTournament.buyIn + currentTournament.fee));
                 setRegisteredTournaments(prev => new Set(prev).add(currentTournament.id));
-                console.log(`Registered for tournament ${currentTournament.id}`);
             } else {
-                alert('Insufficient balance!');
+                alert(`Registration failed: ${error}`);
             }
+        } else if (!userId) {
+            setShowAuthModal(true);
         }
-    }, [currentTournament, userBalance]);
+    }, [currentTournament, userId]);
 
     const handleTournamentShare = useCallback(() => {
         if (currentTournament) {
@@ -475,9 +474,17 @@ const App: React.FC = () => {
         setView('hand-history');
     }, []);
 
-    const handleViewHandReplay = useCallback((handId: string) => {
+    const handleViewHandReplay = useCallback(async (handId: string) => {
+        setLoadingReplay(true);
         setCurrentHandReplayId(handId);
-        setView('hand-replay');
+        const data = await handHistoryService.getHandReplay(handId);
+        if (data) {
+            setCurrentHandReplayData(data);
+            setView('hand-replay');
+        } else {
+            alert('Hand data not found');
+        }
+        setLoadingReplay(false);
     }, []);
 
     const handleShareHandReplay = useCallback(() => {
@@ -496,42 +503,7 @@ const App: React.FC = () => {
         }
     }, [currentHandReplayId]);
 
-    // Demo hand replay data
-    const demoHandReplay = {
-        handId: currentHandReplayId || 'demo',
-        serialNumber: '2049883074',
-        timestamp: new Date(),
-        variant: 'NLH' as PokerVariant,
-        tableId: 'table-1',
-        tableName: 'Diamond Ring',
-        blinds: '10/20',
-        handNumber: 5,
-        totalHands: 10,
-        mainPot: 2265,
-        sidePots: [],
-        communityCards: [
-            { rank: 'A', suit: 'spades' },
-            { rank: '5', suit: 'spades' },
-            { rank: '9', suit: 'diamonds' },
-            { rank: '5', suit: 'hearts' },
-            { rank: '2', suit: 'hearts' },
-        ] as Card[],
-        players: [
-            { seatNumber: 1, playerId: 'p1', username: '-KingFish-', avatarUrl: null, position: 'UTG' as const, holeCards: [{ rank: 'Q', suit: 'spades' }, { rank: '4', suit: 'clubs' }] as Card[], finalHand: null, result: -10, potContribution: 10 },
-            { seatNumber: 2, playerId: 'p2', username: 'soul king', avatarUrl: null, position: 'BTN' as const, holeCards: [{ rank: 'A', suit: 'diamonds' }, { rank: 'K', suit: 'spades' }] as Card[], finalHand: null, result: 0, potContribution: 0 },
-            { seatNumber: 3, playerId: 'p3', username: 'cubby2426', avatarUrl: null, position: 'SB' as const, holeCards: [{ rank: 'J', suit: 'hearts' }, { rank: '9', suit: 'hearts' }] as Card[], finalHand: null, result: -5, potContribution: 5 },
-            { seatNumber: 4, playerId: 'p4', username: 'BigStack', avatarUrl: null, position: 'BB' as const, holeCards: [{ rank: 'K', suit: 'diamonds' }, { rank: '3', suit: 'spades' }] as Card[], finalHand: 'One Pair', result: -1125, potContribution: 1125 },
-            { seatNumber: 5, playerId: 'p5', username: 'Wizurd', avatarUrl: null, position: 'MP' as const, holeCards: [{ rank: '7', suit: 'clubs' }, { rank: '7', suit: 'diamonds' }] as Card[], finalHand: null, result: 0, potContribution: 0 },
-            { seatNumber: 6, playerId: 'p6', username: 'monkey88', avatarUrl: null, position: 'CO' as const, holeCards: [{ rank: 'T', suit: 'diamonds' }, { rank: 'T', suit: 'spades' }] as Card[], finalHand: 'Two Pair', result: 1137.73, potContribution: 100 },
-        ],
-        actions: [
-            { street: 'preflop' as const, seatNumber: 1, action: 'CALL', amount: 20, timestamp: 1 },
-            { street: 'preflop' as const, seatNumber: 6, action: 'RAISE', amount: 60, timestamp: 2 },
-            { street: 'flop' as const, seatNumber: 4, action: 'CHECK', timestamp: 3 },
-        ],
-        winnerId: 'p6',
-        winnerSeat: 6,
-    };
+
 
     return (
         <>
@@ -618,7 +590,7 @@ const App: React.FC = () => {
                     </motion.div>
                 )}
 
-                {view === 'hand-replay' && currentHandReplayId && (
+                {view === 'hand-replay' && currentHandReplayData && (
                     <motion.div
                         key="hand-replay"
                         initial={{ opacity: 0, x: 20 }}
@@ -627,7 +599,7 @@ const App: React.FC = () => {
                         transition={{ duration: 0.3 }}
                     >
                         <HandReplayPage
-                            handData={demoHandReplay}
+                            handData={currentHandReplayData}
                             onClose={() => setView('hand-history')}
                             onShare={handleShareHandReplay}
                             onFavorite={() => console.log('Favorited')}

@@ -86,7 +86,15 @@ export class TournamentService {
             blindStructure: 'Standard',
             payoutStructure: 'Standard',
             playerCount: count || data.current_players || 0,
-            registeredPlayers: [] // Would fetch separately if needed
+            registeredPlayers: [],
+            entriesRange: '100-200',
+            currentLevel: 1,
+            remainingPlayers: count || data.current_players || 0,
+            avgStack: data.starting_chips || 10000,
+            reentryLimit: null,
+            hasAddon: false,
+            hasBigBlindAnte: true,
+            earlyBirdBonus: null
         };
     }
 

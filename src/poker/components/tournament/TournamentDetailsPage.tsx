@@ -13,34 +13,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 // 📊 TYPES
 // ═══════════════════════════════════════════════════════════════════════════
 
-interface TournamentDetails {
-    id: string;
-    name: string;
-    description: string;
-    variant: string;
-    tableSize: number;
-    buyIn: number;
-    fee: number;
-    prizePool: number;
-    guaranteedPool: number;
-    startTime: Date;
-    status: 'REGISTERING' | 'LATE_REG' | 'RUNNING' | 'COMPLETED';
-    entryCount: number;
-    entriesRange: string;
-    maxEntries: number;
-    blindsUp: number;
-    lateRegLevel: number;
-    currentLevel: number;
-    remainingPlayers: number;
-    avgStack: number;
-    startingChips: number;
-    isReentry: boolean;
-    reentryLimit: number | null;
-    hasAddon: boolean;
-    hasBigBlindAnte: boolean;
-    blindStructure: string;
-    earlyBirdBonus: string | null;
-}
+import type { TournamentDetails } from '../../types/poker';
 
 type TabType = 'detail' | 'entries' | 'ranking' | 'unions' | 'tables' | 'rewards';
 
@@ -249,7 +222,7 @@ export const TournamentDetailsPage: React.FC<TournamentDetailsPageProps> = ({
                 >
                     <CountdownStat label="Blinds Up" value={`${tournament.blindsUp}:00`} color="#FF8800" />
                     <CountdownStat label="Late Registration" value={`level ${tournament.lateRegLevel}`} color="#FFF" />
-                    <CountdownStat label="Current Level" value={String(tournament.currentLevel)} color="#00FF88" />
+                    <CountdownStat label="Current Level" value={String(tournament.currentLevel || 1)} color="#00FF88" />
                 </div>
 
                 <div
@@ -262,12 +235,12 @@ export const TournamentDetailsPage: React.FC<TournamentDetailsPageProps> = ({
                 >
                     <CountdownStat
                         label="Remaining Players"
-                        value={`${tournament.remainingPlayers}/${tournament.entryCount}`}
+                        value={`${tournament.remainingPlayers || 0}/${tournament.entryCount}`}
                         color="#FF8800"
                     />
                     <CountdownStat
                         label="Avg Stack"
-                        value={formatChips(tournament.avgStack)}
+                        value={formatChips(tournament.avgStack || 0)}
                         color="#00CCFF"
                     />
                     {tournament.earlyBirdBonus && (

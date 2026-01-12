@@ -246,6 +246,15 @@ export interface TournamentDetails extends Tournament {
         username: string;
         avatarUrl?: string;
     }[];
+    // Premium UI Fields
+    entriesRange?: string;
+    currentLevel?: number;
+    remainingPlayers?: number;
+    avgStack?: number;
+    reentryLimit?: number | null;
+    hasAddon?: boolean;
+    hasBigBlindAnte?: boolean;
+    earlyBirdBonus?: string | null;
 }
 
 export interface LobbyFilters {
