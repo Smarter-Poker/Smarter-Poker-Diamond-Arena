@@ -7,31 +7,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase, isSupabaseConfigured } from '../../../lib/supabase';
-import type { PokerVariant } from '../../types/poker';
-
-// ═══════════════════════════════════════════════════════════════════════════
-// 📊 TOURNAMENT TYPE
-// ═══════════════════════════════════════════════════════════════════════════
-
-interface Tournament {
-    id: string;
-    name: string;
-    variant: PokerVariant;
-    buyIn: number;
-    fee: number;
-    prizePool: number;
-    guaranteedPool: number;
-    startTime: Date;
-    status: 'REGISTERING' | 'LATE_REG' | 'RUNNING' | 'COMPLETED';
-    entryCount: number;
-    maxEntries: number;
-    tableSize: number;
-    blindsUp: number; // minutes
-    startingChips: number;
-    isReentry: boolean;
-    lateRegLevel: number;
-}
+import { tournamentService } from '../../services/TournamentService';
+import type { Tournament, PokerVariant } from '../../types/poker';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🏆 TOURNAMENTS LOBBY PROPS
@@ -50,119 +27,25 @@ export const TournamentsLobby: React.FC<TournamentsLobbyProps> = ({
     const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<'upcoming' | 'running' | 'all'>('upcoming');
 
-    // Demo tournaments fallback generator
-    const getDemoTournaments = (): Tournament[] => {
-        const now = new Date();
-        return [
-            {
-                id: 'tourney-1',
-                name: '15K GTD✨WEEKNIGHT✨',
-                variant: 'NLH',
-                buyIn: 58.50,
-                fee: 6.50,
-                prizePool: 15000,
-                guaranteedPool: 15000,
-                startTime: new Date(now.getTime() + 4 * 60 * 60 * 1000),
-                status: 'REGISTERING',
-                entryCount: 13,
-                maxEntries: 500,
-                tableSize: 9,
-                blindsUp: 10,
-                startingChips: 40000,
-                isReentry: true,
-                lateRegLevel: 15,
-            },
-            {
-                id: 'tourney-2',
-                name: '5K GTD PLO Bounty',
-                variant: 'PLO',
-                buyIn: 20,
-                fee: 2,
-                prizePool: 5000,
-                guaranteedPool: 5000,
-                startTime: new Date(now.getTime() + 2 * 60 * 60 * 1000),
-                status: 'REGISTERING',
-                entryCount: 45,
-                maxEntries: 300,
-                tableSize: 6,
-                blindsUp: 8,
-                startingChips: 25000,
-                isReentry: false,
-                lateRegLevel: 10,
-            },
-            {
-                id: 'tourney-3',
-                name: 'Daily Freeroll',
-                variant: 'NLH',
-                buyIn: 0,
-                fee: 0,
-                prizePool: 1000,
-                guaranteedPool: 1000,
-                startTime: new Date(now.getTime() + 30 * 60 * 1000),
-                status: 'LATE_REG',
-                entryCount: 120,
-                maxEntries: 500,
-                tableSize: 9,
-                blindsUp: 5,
-                startingChips: 10000,
-                isReentry: false,
-                lateRegLevel: 8,
-            },
-        ];
-    };
-
-    // Fetch tournaments from Supabase
+    // Fetch tournaments from Service
     useEffect(() => {
         const fetchTournaments = async () => {
-            if (!isSupabaseConfigured) {
-                setTournaments(getDemoTournaments());
-                setIsLoading(false);
-                return;
-            }
-
             try {
-                const { data, error } = await supabase
-                    .from('tournaments')
-                    .select('*')
-                    .in('status', ['REGISTERING', 'LATE_REG', 'RUNNING'])
-                    .order('start_time', { ascending: true });
-
-                if (error) throw error;
-
-                if (data && data.length > 0) {
-                    const mapped: Tournament[] = data.map(t => ({
-                        id: t.id,
-                        name: t.name,
-                        variant: t.variant || 'NLH',
-                        buyIn: t.buy_in,
-                        fee: t.fee,
-                        prizePool: t.prize_pool,
-                        guaranteedPool: t.guaranteed_pool,
-                        startTime: new Date(t.start_time),
-                        status: t.status,
-                        entryCount: t.entry_count || 0,
-                        maxEntries: t.max_entries,
-                        tableSize: t.table_size,
-                        blindsUp: t.blinds_up,
-                        startingChips: t.starting_chips,
-                        isReentry: t.is_reentry,
-                        lateRegLevel: t.late_reg_level,
-                    }));
-                    setTournaments(mapped);
-                } else {
-                    // Fallback to demo if no real tournaments
-                    setTournaments(getDemoTournaments());
-                }
+                const data = await tournamentService.fetchTournaments();
+                setTournaments(data);
             } catch (err) {
                 console.error('[TournamentsLobby] Failed to fetch:', err);
-                // Fallback to demo on error
-                setTournaments(getDemoTournaments());
+                // Service handles fallback gracefully
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchTournaments();
+
+        // Refresh every 30 seconds
+        const interval = setInterval(fetchTournaments, 30000);
+        return () => clearInterval(interval);
     }, []);
 
     // Filter tournaments

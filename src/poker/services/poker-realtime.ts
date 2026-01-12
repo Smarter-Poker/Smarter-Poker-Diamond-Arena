@@ -111,9 +111,12 @@ export class PokerRealtimeService {
                 id,
                 name,
                 game_type,
+                variant,
                 table_size,
                 small_blind,
                 big_blind,
+                min_buy_in,
+                max_buy_in,
                 is_private,
                 status,
                 hands_played,
@@ -143,6 +146,7 @@ export class PokerRealtimeService {
             id: table.id,
             name: table.name,
             gameType: table.game_type,
+            variant: table.variant || 'NLH',
             tableSize: table.table_size,
             stakes: `${table.small_blind}/${table.big_blind}`,
             playerCount: countMap.get(table.id) || 0,
@@ -150,15 +154,19 @@ export class PokerRealtimeService {
             averagePot: table.average_pot || 0,
             handsPerHour: 60,
             isPrivate: table.is_private,
+            minBuyIn: table.min_buy_in || 0,
+            maxBuyIn: table.max_buy_in || 0,
         }));
     }
 
     private getMockTables(): TableListItem[] {
         return [
-            { id: 'mock-1', name: 'Diamond Ring #1', gameType: 'CASH', tableSize: 9, stakes: '10/20', playerCount: 5, waitlistCount: 0, averagePot: 450, handsPerHour: 65, isPrivate: false },
-            { id: 'mock-2', name: 'Diamond Ring #2', gameType: 'CASH', tableSize: 9, stakes: '10/20', playerCount: 8, waitlistCount: 2, averagePot: 520, handsPerHour: 58, isPrivate: false },
-            { id: 'mock-3', name: 'High Roller', gameType: 'CASH', tableSize: 6, stakes: '100/200', playerCount: 4, waitlistCount: 0, averagePot: 4200, handsPerHour: 72, isPrivate: false },
-            { id: 'mock-4', name: 'Micro Grind', gameType: 'CASH', tableSize: 6, stakes: '1/2', playerCount: 6, waitlistCount: 0, averagePot: 35, handsPerHour: 80, isPrivate: false },
+            { id: 'mock-1', name: 'Diamond Ring #1', gameType: 'CASH', variant: 'NLH', tableSize: 9, stakes: '10/20', playerCount: 5, waitlistCount: 0, averagePot: 450, handsPerHour: 65, isPrivate: false, minBuyIn: 400, maxBuyIn: 2000 },
+            { id: 'mock-2', name: 'Diamond Ring #2', gameType: 'CASH', variant: 'NLH', tableSize: 9, stakes: '10/20', playerCount: 8, waitlistCount: 2, averagePot: 520, handsPerHour: 58, isPrivate: false, minBuyIn: 400, maxBuyIn: 2000 },
+            { id: 'mock-3', name: 'High Roller', gameType: 'CASH', variant: 'NLH', tableSize: 6, stakes: '100/200', playerCount: 4, waitlistCount: 0, averagePot: 4200, handsPerHour: 72, isPrivate: false, minBuyIn: 10000, maxBuyIn: 50000 },
+            { id: 'mock-4', name: 'Micro Grind', gameType: 'CASH', variant: 'NLH', tableSize: 6, stakes: '1/2', playerCount: 6, waitlistCount: 0, averagePot: 35, handsPerHour: 80, isPrivate: false, minBuyIn: 40, maxBuyIn: 200 },
+            { id: 'mock-5', name: 'PLO Action', gameType: 'CASH', variant: 'PLO', tableSize: 6, stakes: '20/40', playerCount: 5, waitlistCount: 0, averagePot: 1300, handsPerHour: 60, isPrivate: false, minBuyIn: 2000, maxBuyIn: 10000 },
+            { id: 'mock-6', name: 'PLO5 Madness', gameType: 'CASH', variant: 'PLO5', tableSize: 6, stakes: '5/10', playerCount: 6, waitlistCount: 1, averagePot: 280, handsPerHour: 55, isPrivate: false, minBuyIn: 500, maxBuyIn: 2000 },
         ];
     }
 

@@ -206,6 +206,7 @@ export interface TableListItem {
     id: string;
     name: string;
     gameType: GameType;
+    variant?: PokerVariant; // e.g. NLH, PLO
     tableSize: TableSize;
     stakes: string;             // "10/20" format
     playerCount: number;
@@ -213,6 +214,38 @@ export interface TableListItem {
     averagePot: number;
     handsPerHour: number;
     isPrivate: boolean;
+    minBuyIn: number;
+    maxBuyIn: number;
+}
+
+export interface Tournament {
+    id: string;
+    name: string;
+    variant: PokerVariant;
+    buyIn: number;
+    fee: number;
+    prizePool: number;
+    guaranteedPool: number;
+    startTime: Date;
+    status: 'REGISTERING' | 'LATE_REG' | 'RUNNING' | 'COMPLETED' | 'ANNOUNCED' | 'CANCELLED';
+    entryCount: number;
+    maxEntries: number;
+    tableSize: number;
+    blindsUp: number; // minutes or level duration
+    startingChips: number;
+    isReentry: boolean;
+    lateRegLevel: number;
+}
+
+export interface TournamentDetails extends Tournament {
+    description: string;
+    blindStructure: string; // e.g., "Turbo (5 min)"
+    payoutStructure: string; // e.g., "Top 15%"
+    registeredPlayers: {
+        userId: string;
+        username: string;
+        avatarUrl?: string;
+    }[];
 }
 
 export interface LobbyFilters {

@@ -7,24 +7,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { supabase, isSupabaseConfigured } from '../../../lib/supabase';
-import type { PokerVariant } from '../../types/poker';
+import { pokerService } from '../../services/poker-realtime';
+import type { TableListItem, PokerVariant } from '../../types/poker';
 
 // ═══════════════════════════════════════════════════════════════════════════
-// 📊 CASH TABLE TYPE
+// 📊 CASH GAMES LOBBY PROPS
 // ═══════════════════════════════════════════════════════════════════════════
-
-interface CashTable {
-    id: string;
-    name: string;
-    variant: PokerVariant;
-    stakes: string; // e.g., "10/20"
-    tableSize: number;
-    playerCount: number;
-    minBuyIn: number;
-    maxBuyIn: number;
-    avgPot: number;
-}
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🎰 CASH GAMES LOBBY PROPS
@@ -39,7 +27,7 @@ export const CashGamesLobby: React.FC<CashGamesLobbyProps> = ({
     onJoinTable,
     userBalance,
 }) => {
-    const [tables, setTables] = useState<CashTable[]>([]);
+    const [tables, setTables] = useState<TableListItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [filter, setFilter] = useState<{
         variant: PokerVariant | 'ALL';
@@ -49,59 +37,25 @@ export const CashGamesLobby: React.FC<CashGamesLobbyProps> = ({
         stakes: 'ALL',
     });
 
-    // Demo tables fallback
-    const DEMO_TABLES: CashTable[] = [
-        { id: 'cash-1', name: 'Diamond Ring', variant: 'NLH', stakes: '10/20', tableSize: 6, playerCount: 4, minBuyIn: 200, maxBuyIn: 2000, avgPot: 450 },
-        { id: 'cash-2', name: 'High Roller', variant: 'NLH', stakes: '100/200', tableSize: 6, playerCount: 2, minBuyIn: 2000, maxBuyIn: 20000, avgPot: 4500 },
-        { id: 'cash-3', name: 'PLO Action', variant: 'PLO', stakes: '25/50', tableSize: 6, playerCount: 5, minBuyIn: 500, maxBuyIn: 5000, avgPot: 1200 },
-        { id: 'cash-4', name: 'PLO8 Split', variant: 'PLO8', stakes: '10/20', tableSize: 6, playerCount: 3, minBuyIn: 200, maxBuyIn: 2000, avgPot: 380 },
-    ];
-
-    // Fetch tables from Supabase
+    // Fetch tables from Matchmaker Service
     useEffect(() => {
         const fetchTables = async () => {
-            if (!isSupabaseConfigured) {
-                setTables(DEMO_TABLES);
-                setIsLoading(false);
-                return;
-            }
-
             try {
-                const { data, error } = await supabase
-                    .from('poker_tables')
-                    .select('*')
-                    .eq('game_type', 'CASH')
-                    .eq('status', 'ACTIVE');
-
-                if (error) throw error;
-
-                if (data && data.length > 0) {
-                    const mapped: CashTable[] = data.map(t => ({
-                        id: t.id,
-                        name: t.name,
-                        variant: t.variant || 'NLH',
-                        stakes: `${t.small_blind}/${t.big_blind}`,
-                        tableSize: t.table_size,
-                        playerCount: t.player_count || 0,
-                        minBuyIn: t.min_buy_in,
-                        maxBuyIn: t.max_buy_in,
-                        avgPot: t.avg_pot || 0,
-                    }));
-                    setTables(mapped);
-                } else {
-                    // Fallback to demo if no real tables
-                    setTables(DEMO_TABLES);
-                }
+                const data = await pokerService.fetchTables();
+                setTables(data);
             } catch (err) {
                 console.error('[CashLobby] Failed to fetch tables:', err);
-                // Fallback to demo on error
-                setTables(DEMO_TABLES);
+                // Service handles mock fallback logic
             } finally {
                 setIsLoading(false);
             }
         };
 
         fetchTables();
+
+        // Refresh lobby every 10s
+        const interval = setInterval(fetchTables, 10000);
+        return () => clearInterval(interval);
     }, []);
 
     // Filter tables
@@ -172,7 +126,7 @@ export const CashGamesLobby: React.FC<CashGamesLobbyProps> = ({
 // ═══════════════════════════════════════════════════════════════════════════
 
 interface CashTableCardProps {
-    table: CashTable;
+    table: TableListItem;
     onJoin: () => void;
     canAfford: boolean;
 }
@@ -195,10 +149,10 @@ const CashTableCard: React.FC<CashTableCardProps> = ({ table, onJoin, canAfford 
                 <span style={{ fontSize: 16, fontWeight: 600, color: '#FFF' }}>
                     {table.name}
                 </span>
-                <VariantBadge variant={table.variant} />
+                <VariantBadge variant={table.variant || 'NLH'} />
             </div>
             <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>
-                💎 {table.stakes} • {table.tableSize}-max • Avg Pot: {table.avgPot}
+                💎 {table.stakes} • {table.tableSize}-max • Avg Pot: {table.averagePot}
             </div>
         </div>
 
