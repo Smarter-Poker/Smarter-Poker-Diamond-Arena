@@ -1,0 +1,21 @@
+{
+    "$schema": "https://openapi.vercel.sh/vercel.json",
+    "crons": [
+        {
+            "path": "/api/cron/trigger-bots",
+            "schedule": "*/30 * * * *"
+        },
+        {
+            "path": "/api/cron/scrape-content",
+            "schedule": "0 */2 * * *"
+        }
+    ],
+    "functions": {
+        "api/cron/trigger-bots.ts": {
+            "maxDuration": 60
+        },
+        "api/cron/scrape-content.ts": {
+            "maxDuration": 30
+        }
+    }
+}
