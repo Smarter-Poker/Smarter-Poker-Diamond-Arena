@@ -334,17 +334,43 @@ const App: React.FC = () => {
     const [username, setUsername] = useState('Guest');
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    // Check for existing session on mount
+    // PARALLEL LOADING: Track data ready state separately from animation
+    const [dataReady, setDataReady] = useState(false);
+    const [animationComplete, setAnimationComplete] = useState(false);
+
+    // Fetch user profile (balance + username)
+    const fetchUserProfile = useCallback(async (uid: string) => {
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('diamond_balance, username')
+            .eq('id', uid)
+            .single();
+
+        if (data && !error) {
+            setUserBalance(data.diamond_balance || 10000);
+            setUsername(data.username || 'Player');
+        }
+    }, []);
+
+    // START DATA LOADING IMMEDIATELY on mount (parallel with loading screen)
     useEffect(() => {
-        const checkSession = async () => {
+        const loadAllData = async () => {
+            console.log('[DiamondArena] Starting parallel data loading...');
+
+            // Check session
             const { data: { session } } = await supabase.auth.getSession();
             if (session?.user) {
                 setUserId(session.user.id);
                 setIsAuthenticated(true);
-                fetchUserProfile(session.user.id);
+                await fetchUserProfile(session.user.id);
             }
+
+            // Mark data as ready
+            console.log('[DiamondArena] Data loading complete');
+            setDataReady(true);
         };
-        checkSession();
+
+        loadAllData();
 
         // Listen for auth changes
         const { data: { subscription } } = supabase.auth.onAuthStateChange(
@@ -363,20 +389,20 @@ const App: React.FC = () => {
         );
 
         return () => subscription.unsubscribe();
-    }, []);
+    }, [fetchUserProfile]);
 
-    // Fetch user profile (balance + username)
-    const fetchUserProfile = useCallback(async (uid: string) => {
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('diamond_balance, username')
-            .eq('id', uid)
-            .single();
-
-        if (data && !error) {
-            setUserBalance(data.diamond_balance || 10000);
-            setUsername(data.username || 'Player');
+    // TRANSITION TO LOBBY: Only when BOTH animation AND data are ready
+    useEffect(() => {
+        if (animationComplete && dataReady && view === 'loading') {
+            console.log('[DiamondArena] Both animation and data ready - transitioning to lobby');
+            setView('lobby');
         }
+    }, [animationComplete, dataReady, view]);
+
+    // Handle loading screen animation complete
+    const handleLoadingComplete = useCallback(() => {
+        console.log('[DiamondArena] Loading animation complete');
+        setAnimationComplete(true);
     }, []);
 
     const handleAuthSuccess = useCallback((uid: string) => {
@@ -511,7 +537,7 @@ const App: React.FC = () => {
                 {view === 'loading' && (
                     <LoadingScreen
                         key="loading"
-                        onComplete={() => setView('lobby')}
+                        onComplete={handleLoadingComplete}
                     />
                 )}
 
