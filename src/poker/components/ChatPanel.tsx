@@ -7,6 +7,7 @@
 
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePersistedState } from '../../hooks/usePersistedState';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 💬 TYPES
@@ -52,7 +53,7 @@ export const ChatPanel: React.FC<ChatPanelProps> = ({
     onToggleCollapse,
 }) => {
     const [inputValue, setInputValue] = useState('');
-    const [showEmotes, setShowEmotes] = useState(false);
+    const [showEmotes, setShowEmotes] = usePersistedState<boolean>('chat.showEmotes', false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll to bottom on new messages

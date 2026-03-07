@@ -12,6 +12,7 @@ import { ActionControls } from './ActionControls';
 import { TableMenu, MenuButton } from './TableMenu';
 import { useSimulatedTable } from '../hooks/useSimulatedTable';
 import { usePokerTable, dbRowToTableConfig, dbRowToPlayer } from '../hooks/usePoker';
+import { usePersistedState } from '../../hooks/usePersistedState';
 import type { ActionType, TableState } from '../types/poker';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -31,8 +32,8 @@ export const PokerRoomPremium: React.FC<PokerRoomPremiumProps> = ({
 }) => {
     const [showMenu, setShowMenu] = useState(false);
     const [showStats, setShowStats] = useState(false);
-    const [soundEnabled, setSoundEnabled] = useState(true);
-    const [fourColorDeck, setFourColorDeck] = useState(false);
+    const [soundEnabled, setSoundEnabled] = usePersistedState<boolean>('table.soundEnabled', true);
+    const [fourColorDeck, setFourColorDeck] = usePersistedState<boolean>('table.fourColorDeck', false);
     const [timerProgress, setTimerProgress] = useState(100);
     const [, forceUpdate] = useState(0);
 

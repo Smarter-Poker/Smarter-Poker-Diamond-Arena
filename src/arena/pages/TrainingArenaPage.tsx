@@ -26,6 +26,7 @@ import {
     useLeaks,
     type Question,
 } from '../../hooks/useTrainingSession';
+import { usePersistedState } from '../../hooks/usePersistedState';
 
 // Types
 import { useFeedback } from '../../components/ArenaFeedback';
@@ -104,7 +105,7 @@ export const TrainingArenaPage: React.FC<TrainingArenaPageProps> = ({
     initialLevel = 1,
 }) => {
     // State
-    const [view, setView] = useState<PageView>('levels');
+    const [view, setView] = usePersistedState<PageView>('training.view', 'levels');
     const [levels, setLevels] = useState<LevelData[]>(MOCK_LEVELS);
     const [currentLevelData, setCurrentLevelData] = useState<LevelData | null>(null);
     const [showResult, setShowResult] = useState(false);

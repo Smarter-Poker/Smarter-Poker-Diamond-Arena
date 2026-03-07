@@ -8,6 +8,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePersistedState } from '../../../hooks/usePersistedState';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 📊 TYPES
@@ -36,7 +37,7 @@ export const TournamentDetailsPage: React.FC<TournamentDetailsPageProps> = ({
     onRegister,
     onShare,
 }) => {
-    const [activeTab, setActiveTab] = useState<TabType>('detail');
+    const [activeTab, setActiveTab] = usePersistedState<TabType>('tournament.activeTab', 'detail');
     const [showSignUpModal, setShowSignUpModal] = useState(false);
     const [countdown, setCountdown] = useState({ hours: 0, minutes: 0, seconds: 0 });
 

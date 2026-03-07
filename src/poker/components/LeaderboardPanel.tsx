@@ -7,6 +7,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { usePersistedState } from '../../hooks/usePersistedState';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🏆 TYPES
@@ -46,8 +47,8 @@ export const LeaderboardPanel: React.FC<LeaderboardPanelProps> = ({
     onClose,
     isLoading = false,
 }) => {
-    const [period, setPeriod] = useState<LeaderboardPeriod>('WEEK');
-    const [metric, setMetric] = useState<LeaderboardMetric>('DIAMONDS');
+    const [period, setPeriod] = usePersistedState<LeaderboardPeriod>('leaderboard.period', 'WEEK');
+    const [metric, setMetric] = usePersistedState<LeaderboardMetric>('leaderboard.metric', 'DIAMONDS');
 
     // Sort based on selected metric
     const sortedEntries = [...entries].sort((a, b) => {

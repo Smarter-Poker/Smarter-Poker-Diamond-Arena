@@ -9,6 +9,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PlayingCard } from '../PlayingCard';
+import { usePersistedState } from '../../../hooks/usePersistedState';
 import type { Card, PokerVariant } from '../../types/poker';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -73,7 +74,7 @@ export const HandReplayPage: React.FC<HandReplayPageProps> = ({
     onFavorite,
     onPlayVideo,
 }) => {
-    const [viewMode, setViewMode] = useState<'summary' | 'detail'>('summary');
+    const [viewMode, setViewMode] = usePersistedState<'summary' | 'detail'>('handReplay.viewMode', 'summary');
     const [currentStep, setCurrentStep] = useState(1);
     const totalSteps = handData.actions.length || 1;
 

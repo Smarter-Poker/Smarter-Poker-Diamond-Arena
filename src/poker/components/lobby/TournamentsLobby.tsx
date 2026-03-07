@@ -8,6 +8,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { tournamentService } from '../../services/TournamentService';
+import { usePersistedState } from '../../../hooks/usePersistedState';
 import type { Tournament, PokerVariant } from '../../types/poker';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -25,7 +26,7 @@ export const TournamentsLobby: React.FC<TournamentsLobbyProps> = ({
 }) => {
     const [tournaments, setTournaments] = useState<Tournament[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [filter, setFilter] = useState<'upcoming' | 'running' | 'all'>('upcoming');
+    const [filter, setFilter] = usePersistedState<'upcoming' | 'running' | 'all'>('tournaments.filter', 'upcoming');
 
     // Fetch tournaments from Service
     useEffect(() => {

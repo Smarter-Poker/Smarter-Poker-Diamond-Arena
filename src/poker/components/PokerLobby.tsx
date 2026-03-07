@@ -10,6 +10,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { GameType, LobbyFilters } from '../types/poker';
 import { usePokerLobby } from '../hooks/usePoker';
+import { usePersistedState } from '../../hooks/usePersistedState';
 
 // ═══════════════════════════════════════════════════════════════════════════
 // 🏛️ LOBBY COMPONENT
@@ -27,8 +28,8 @@ export const PokerLobby: React.FC<PokerLobbyProps> = ({
     userBalance,
 }) => {
     const { tables, isLoading, error, refresh } = usePokerLobby();
-    const [filters, setFilters] = useState<LobbyFilters>({});
-    const [selectedTab, setSelectedTab] = useState<GameType | 'ALL'>('ALL');
+    const [filters, setFilters] = usePersistedState<LobbyFilters>('poker.filters', {});
+    const [selectedTab, setSelectedTab] = usePersistedState<GameType | 'ALL'>('poker.selectedTab', 'ALL');
 
     const filteredTables = tables.filter(table => {
         if (selectedTab !== 'ALL' && table.gameType !== selectedTab) return false;

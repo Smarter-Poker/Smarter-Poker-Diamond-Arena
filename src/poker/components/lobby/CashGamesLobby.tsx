@@ -8,6 +8,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { pokerService } from '../../services/poker-realtime';
+import { usePersistedState } from '../../../hooks/usePersistedState';
 import type { TableListItem, PokerVariant } from '../../types/poker';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -29,10 +30,10 @@ export const CashGamesLobby: React.FC<CashGamesLobbyProps> = ({
 }) => {
     const [tables, setTables] = useState<TableListItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [filter, setFilter] = useState<{
+    const [filter, setFilter] = usePersistedState<{
         variant: PokerVariant | 'ALL';
         stakes: 'ALL' | 'LOW' | 'MID' | 'HIGH';
-    }>({
+    }>('cashGames.filter', {
         variant: 'ALL',
         stakes: 'ALL',
     });
