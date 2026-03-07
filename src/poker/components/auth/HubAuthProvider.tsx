@@ -7,7 +7,7 @@
  */
 
 import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react';
-import { supabase, isSupabaseConfigured } from '../../lib/supabase';
+import { supabase, isSupabaseConfigured } from '../../../lib/supabase';
 import type { User, Session } from '@supabase/supabase-js';
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -156,14 +156,26 @@ export const HubAuthProvider: React.FC<HubAuthProviderProps> = ({ children }) =>
             }
 
             try {
-                const { data: { session } } = await supabase.auth.getSession();
+                const { getAuthUser } = await import('../../../lib/authUtils');
+                const fallbackUser = getAuthUser();
 
-                if (session?.user) {
-                    const profile = await fetchProfile(session.user.id);
+                let sessionUser = fallbackUser;
+
+                try {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (session?.user) {
+                        sessionUser = session.user;
+                    }
+                } catch (sessionErr) {
+                    console.warn('[HubAuth] getSession warning:', sessionErr);
+                }
+
+                if (sessionUser) {
+                    const profile = await fetchProfile(sessionUser.id);
                     setState({
                         isLoading: false,
                         isAuthenticated: true,
-                        user: session.user,
+                        user: sessionUser,
                         profile,
                         error: null,
                     });

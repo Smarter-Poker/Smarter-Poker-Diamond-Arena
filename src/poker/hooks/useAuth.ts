@@ -110,10 +110,23 @@ export function useAuth(): AuthState & {
         // Get initial session
         const initAuth = async () => {
             try {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (session?.user) {
-                    setUser(session.user);
-                    await fetchProfile(session.user.id);
+                const { getAuthUser } = await import('../../lib/authUtils');
+                const fallbackUser = getAuthUser();
+
+                let sessionUser = fallbackUser;
+
+                try {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (session?.user) {
+                        sessionUser = session.user;
+                    }
+                } catch (sessionErr) {
+                    console.warn('Auth init getSession warning:', sessionErr);
+                }
+
+                if (sessionUser) {
+                    setUser(sessionUser);
+                    await fetchProfile(sessionUser.id);
                 }
             } catch (err) {
                 console.error('Auth init error:', err);

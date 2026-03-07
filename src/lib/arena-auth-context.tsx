@@ -173,21 +173,29 @@ export const ArenaProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     useEffect(() => {
         const initializeAuth = async () => {
             try {
-                const { data: { session }, error } = await supabase.auth.getSession();
+                const { getAuthUser } = await import('./authUtils');
+                const fallbackUser = getAuthUser();
 
-                if (error) {
-                    console.error('❌ VOID_GATE: Session fetch error:', error.message);
-                    setState(prev => ({ ...prev, isLoading: false, error: error.message }));
-                    return;
+                let sessionUser = fallbackUser;
+                let currentSession = null;
+
+                try {
+                    const { data: { session }, error } = await supabase.auth.getSession();
+                    if (!error && session?.user) {
+                        sessionUser = session.user;
+                        currentSession = session;
+                    }
+                } catch (sessionErr) {
+                    console.warn('⚠️ VOID_GATE: getSession failed (using local storage fallback):', sessionErr);
                 }
 
-                if (session?.user) {
-                    const profileData = await fetchUserProfile(session.user.id);
+                if (sessionUser) {
+                    const profileData = await fetchUserProfile(sessionUser.id);
 
                     setState(prev => ({
                         ...prev,
-                        session,
-                        user: session.user,
+                        session: currentSession,
+                        user: sessionUser,
                         profile: profileData?.profile || null,
                         capabilities: profileData?.capabilities || [],
                         accessFlags: profileData?.accessFlags || [],

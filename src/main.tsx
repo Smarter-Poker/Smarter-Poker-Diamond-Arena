@@ -358,11 +358,28 @@ const App: React.FC = () => {
             console.log('[DiamondArena] Starting parallel data loading...');
 
             // Check session
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.user) {
-                setUserId(session.user.id);
-                setIsAuthenticated(true);
-                await fetchUserProfile(session.user.id);
+            try {
+                const { getAuthUser } = await import('./lib/authUtils');
+                const fallbackUser = getAuthUser();
+
+                let sessionUser = fallbackUser;
+
+                try {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (session?.user) {
+                        sessionUser = session.user;
+                    }
+                } catch (sessionErr) {
+                    console.warn('[DiamondArena] getSession warning:', sessionErr);
+                }
+
+                if (sessionUser) {
+                    setUserId(sessionUser.id);
+                    setIsAuthenticated(true);
+                    await fetchUserProfile(sessionUser.id);
+                }
+            } catch (err) {
+                console.error('[DiamondArena] Auth init error:', err);
             }
 
             // Mark data as ready
