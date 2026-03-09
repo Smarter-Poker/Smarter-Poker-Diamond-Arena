@@ -96,20 +96,48 @@ export const AuthModal: React.FC<AuthModalProps> = ({
             if (authError) {
                 setError(authError.message);
             } else if (data.user) {
-                // Create profile with initial diamond balance
-                const { error: profileError } = await supabase
+                // ═══════════════════════════════════════════════════════════════════
+                // 🔗 DUPLICATE PREVENTION: Check if a profile with same email exists
+                // ═══════════════════════════════════════════════════════════════════
+                const { data: emailMatch, error: emailCheckError } = await supabase
                     .from('profiles')
-                    .insert({
-                        id: data.user.id,
-                        username: username.trim(),
-                        diamond_balance: 10000, // Starting balance
-                    });
+                    .select('id, username, email')
+                    .ilike('email', email.trim())
+                    .maybeSingle();
 
-                if (profileError && !profileError.message.includes('duplicate')) {
-                    console.error('Profile creation error:', profileError);
+                if (emailMatch && !emailCheckError) {
+                    console.log(`🔐 [AUTH] DUPLICATE PREVENTED: Found existing profile for ${email}. Linking to auth.id=${data.user.id}`);
+
+                    // Update existing profile's last login
+                    await supabase
+                        .from('profiles')
+                        .update({
+                            last_login: new Date().toISOString(),
+                            last_active: new Date().toISOString(),
+                            is_online: true
+                        })
+                        .eq('id', emailMatch.id);
+
+                    setSuccessMessage('Account linked and logged in! Loading arena...');
+                } else {
+                    // Create new profile with initial diamond balance
+                    const { error: profileError } = await supabase
+                        .from('profiles')
+                        .insert({
+                            id: data.user.id,
+                            username: username.trim(),
+                            diamond_balance: 10000, // Starting balance
+                            last_login: new Date().toISOString(),
+                            last_active: new Date().toISOString(),
+                            is_online: true
+                        });
+
+                    if (profileError && !profileError.message.includes('duplicate')) {
+                        console.error('Profile creation error:', profileError);
+                    }
+
+                    setSuccessMessage('Account created! Check your email to confirm.');
                 }
-
-                setSuccessMessage('Account created! Check your email to confirm.');
             }
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Signup failed');
