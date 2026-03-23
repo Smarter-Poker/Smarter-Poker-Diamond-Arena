@@ -1,3 +1,5 @@
+![CI](https://github.com/Smarter-Poker/Smarter-Poker-Diamond-Arena/actions/workflows/ci.yml/badge.svg)
+
 # 💎 DIAMOND ECONOMY RAILS
 
 > Virtual Currency Mint & Streak Math System for **Smarter.Poker**
