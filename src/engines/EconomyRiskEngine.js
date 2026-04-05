@@ -43,7 +43,7 @@ export const ECONOMY_RISK_CONFIG = {
 
     // Task 54: Currency Swap
     SWAP_RATES: {
-        XP_TO_DIAMOND: { rate: 0.01, fee: 5.00 },  // 100 XP = 1 Diamond (5% fee)
+        XP_TO_DIAMOND: { rate: 0.01, fee: 5.00 },  // DEPRECATED: XP no longer exists. Kept for legacy swap logic
         DIAMOND_TO_TICKET: { rate: 1.00, fee: 0 }   // 1:1 no fee
     }
 };

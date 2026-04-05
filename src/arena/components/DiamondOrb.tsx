@@ -2,7 +2,7 @@
  * 💎 THE DIAMOND ORB — SPATIAL NEURAL HUB
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  * Central 3D-feeling interactive sphere for training games.
- * Shows XP/Diamond multipliers through reactive pulses.
+ * Shows Diamond multipliers through reactive pulses.
  * Particle emitters for visual feedback.
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
@@ -19,8 +19,8 @@ export type OrbStatus = 'idle' | 'active' | 'charging' | 'success' | 'error' | '
 export interface OrbState {
     status: OrbStatus;
     level: number;
-    xp: number;
-    xpToNext: number;
+    xp: number;       // legacy field name — represents diamonds
+    xpToNext: number; // legacy field name — represents diamonds to next level
     multiplier: number;
     streakDays: number;
     masteryRate: number;

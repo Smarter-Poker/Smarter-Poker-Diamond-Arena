@@ -2,7 +2,7 @@
  * 💎 THE DIAMOND VAULT — GLOBAL STATE CONTRACT
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  * TypeScript interfaces for Diamond Arena users.
- * Tracks XP, Diamond Multipliers, Daily Streaks.
+ * Tracks Diamonds, Multipliers, Daily Streaks.
  * Enforces 85% Mastery Gate for level progression.
  * ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
  */
@@ -53,17 +53,17 @@ export interface ArenaUser {
 }
 
 /**
- * XP & Progression state
+ * Diamond Progression state (diamonds are the only currency)
  */
-export interface XPState {
-    /** Total XP earned (IMMUTABLE - can never decrease) */
-    xpTotal: number;
+export interface DiamondProgressionState {
+    /** Total diamonds earned (IMMUTABLE - can never decrease) */
+    diamondTotal: number;
 
     /** Current level (1-100) */
     level: number;
 
-    /** XP required for next level */
-    xpToNextLevel: number;
+    /** Diamonds required for next level */
+    diamondsToNextLevel: number;
 
     /** Progress percentage to next level (0-100) */
     levelProgress: number;
@@ -71,6 +71,9 @@ export interface XPState {
     /** Skill tier derived from level */
     skillTier: SkillTier;
 }
+
+/** @deprecated Use DiamondProgressionState */
+export type XPState = DiamondProgressionState;
 
 /**
  * Diamond currency state
@@ -173,8 +176,8 @@ export interface TrainingLevel {
     /** Questions per session */
     questionsCount: number;
 
-    /** XP reward for completion */
-    xpReward: number;
+    /** Diamond reward for completion */
+    diamondProgressionReward: number;
 
     /** Diamond reward for completion */
     diamondReward: number;
@@ -268,8 +271,8 @@ export const SKILL_TIER_THRESHOLDS: Record<SkillTier, { minLevel: number; icon: 
 // ═══════════════════════════════════════════════════════════════════════════
 
 export interface ArenaActions {
-    // XP Actions
-    addXP: (amount: number, source: string) => Promise<void>;
+    // Diamond Actions (progression)
+    addDiamondProgression: (amount: number, source: string) => Promise<void>;
 
     // Diamond Actions
     addDiamonds: (amount: number, source: string, applyMultiplier?: boolean) => Promise<void>;
@@ -281,7 +284,7 @@ export interface ArenaActions {
     // Training Actions
     startTrainingSession: (levelId: string) => Promise<TrainingSession>;
     submitAnswer: (sessionId: string, answer: TrainingAnswer) => Promise<void>;
-    completeSession: (sessionId: string) => Promise<{ passed: boolean; xpEarned: number; diamondsEarned: number }>;
+    completeSession: (sessionId: string) => Promise<{ passed: boolean; diamondsEarned: number }>;
 
     // Mastery Actions
     checkMasteryGate: () => boolean;
@@ -330,39 +333,48 @@ export function checkMasteryGate(correctAnswers: number, totalAnswers: number): 
 }
 
 /**
- * Calculate XP required for a given level
+ * Calculate diamonds required for a given level
  */
-export function getXPForLevel(level: number): number {
-    // Exponential curve: 100 * level^1.5
-    return Math.floor(100 * Math.pow(level, 1.5));
+export function getDiamondsForLevel(level: number): number {
+    // Exponential curve: 50 * level^1.5 (diamond-based)
+    return Math.floor(50 * Math.pow(level, 1.5));
 }
 
+/** @deprecated Use getDiamondsForLevel */
+export const getXPForLevel = getDiamondsForLevel;
+
 /**
- * Calculate level from total XP
+ * Calculate level from total diamonds
  */
-export function getLevelFromXP(totalXP: number): { level: number; xpInLevel: number; xpToNext: number; progress: number } {
+export function getLevelFromDiamonds(totalDiamonds: number): { level: number; diamondsInLevel: number; diamondsToNext: number; progress: number } {
     let level = 1;
-    let xpRemaining = totalXP;
+    let remaining = totalDiamonds;
 
     while (true) {
-        const xpRequired = getXPForLevel(level);
-        if (xpRemaining < xpRequired) {
-            const progress = (xpRemaining / xpRequired) * 100;
+        const required = getDiamondsForLevel(level);
+        if (remaining < required) {
+            const progress = (remaining / required) * 100;
             return {
                 level,
-                xpInLevel: xpRemaining,
-                xpToNext: xpRequired - xpRemaining,
+                diamondsInLevel: remaining,
+                diamondsToNext: required - remaining,
                 progress: Math.floor(progress),
             };
         }
-        xpRemaining -= xpRequired;
+        remaining -= required;
         level++;
 
         // Cap at level 100
         if (level > 100) {
-            return { level: 100, xpInLevel: 0, xpToNext: 0, progress: 100 };
+            return { level: 100, diamondsInLevel: 0, diamondsToNext: 0, progress: 100 };
         }
     }
+}
+
+/** @deprecated Use getLevelFromDiamonds */
+export function getLevelFromXP(totalXP: number) {
+    const result = getLevelFromDiamonds(totalXP);
+    return { level: result.level, xpInLevel: result.diamondsInLevel, xpToNext: result.diamondsToNext, progress: result.progress };
 }
 
 /**
@@ -418,7 +430,9 @@ export default {
     getSkillTier,
     getStreakMultiplier,
     checkMasteryGate,
-    getXPForLevel,
+    getDiamondsForLevel,
+    getXPForLevel: getDiamondsForLevel,
+    getLevelFromDiamonds,
     getLevelFromXP,
     applyBurnRate,
     createDefaultMasteryState,

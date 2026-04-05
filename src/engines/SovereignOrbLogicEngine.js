@@ -56,7 +56,7 @@ export class SovereignOrbLogicEngine {
     // ═══════════════════════════════════════════════════════
 
     /**
-     * Get arena access tier for user based on XP
+     * Get arena access tier for user based on diamonds
      * 
      * @param {string} userId - User UUID
      * @returns {Promise<object>} Access tier info
@@ -96,9 +96,9 @@ export class SovereignOrbLogicEngine {
     }
 
     /**
-     * Calculate arena tier from XP locally
-     * 
-     * @param {number} userXp - User's XP
+     * Calculate arena tier from diamonds locally (legacy param name: userXp)
+     *
+     * @param {number} userXp - User's diamond total (legacy param name)
      * @returns {object} Tier info
      */
     static calculateArenaTierFromXp(userXp) {

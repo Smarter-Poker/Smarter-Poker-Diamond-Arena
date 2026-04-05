@@ -1,4 +1,4 @@
-// Diamond Arena Listener:
+// Diamond Arena Listener (legacy filename):
 export const xpListener = (amount) => {
-  console.log("Diamond Arena sending XP to Master-Bus:", amount);
+  console.log("Diamond Arena sending diamonds to Master-Bus:", amount);
 };
