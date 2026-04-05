@@ -291,7 +291,7 @@ const LevelDetails: React.FC<{ level: LevelData; userMasteryRate?: number }> = (
                     borderRadius: 8,
                     textAlign: 'center',
                 }}>
-                    <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}>XP REWARD</div>
+                    <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}>💎 REWARD</div>
                     <div style={{ fontSize: 18, fontWeight: 700, color: '#00FF94' }}>
                         +{level.xpReward} ⚡
                     </div>

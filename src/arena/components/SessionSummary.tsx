@@ -216,7 +216,7 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({
                     transition={{ delay: 0.3, type: 'spring' }}
                     style={{ flex: 1, textAlign: 'center' }}
                 >
-                    <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}>XP EARNED</div>
+                    <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}>DIAMONDS EARNED</div>
                     <div style={{ fontSize: 28, fontWeight: 800, color: '#00FF94' }}>
                         +{xpEarned} ⚡
                     </div>

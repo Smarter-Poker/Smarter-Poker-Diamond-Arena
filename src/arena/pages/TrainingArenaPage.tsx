@@ -134,7 +134,7 @@ export const TrainingArenaPage: React.FC<TrainingArenaPageProps> = ({
     const orbState: OrbState = {
         status: status === 'active' ? 'active' : status === 'completed' ? 'success' : 'idle',
         level: currentLevelData?.number || 1,
-        xp: 0,
+        xp: 0, // legacy field — diamonds are the only currency
         xpToNext: 100,
         multiplier: 1.0,
         streakDays: 0,
